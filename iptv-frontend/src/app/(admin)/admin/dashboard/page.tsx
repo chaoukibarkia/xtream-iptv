@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import {
   Users,
   Tv,
@@ -21,6 +22,7 @@ import {
   TrendingUp,
   TrendingDown,
   ArrowRight,
+  BarChart3,
 } from "lucide-react";
 import { StatsCard } from "@/components/admin/stats-card";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -40,6 +42,17 @@ import {
 import { useAuthStore } from "@/stores/authStore";
 import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+} from "recharts";
 
 // Country code to flag emoji converter
 function getCountryFlag(countryCode: string | null): string {
@@ -325,6 +338,24 @@ function AdminDashboard() {
 
   const servers = serversData?.servers || [];
 
+  // Connection history for charts (keep last 20 data points)
+  const [connectionHistory, setConnectionHistory] = useState<{ time: string; live: number; vod: number; total: number }[]>([]);
+
+  useEffect(() => {
+    if (stats) {
+      const now = new Date();
+      const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const liveViewers = stats.connections.live || 0;
+      const vodViewers = stats.connections.vod || 0;
+      
+      setConnectionHistory(prev => {
+        const newHistory = [...prev, { time, live: liveViewers, vod: vodViewers, total: liveViewers + vodViewers }];
+        // Keep only last 20 points (about 10 minutes of data with 30s refresh)
+        return newHistory.slice(-20);
+      });
+    }
+  }, [stats]);
+
   // Calculate total connections (live + vod viewers)
   const totalViewers = (stats?.connections.live || 0) + (stats?.connections.vod || 0);
 
@@ -593,6 +624,87 @@ function AdminDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Streaming Analytics Chart */}
+      {connectionHistory.length > 1 && (
+        <Card>
+          <CardHeader className="pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-base flex items-center gap-2">
+                <BarChart3 className="h-4 w-4" />
+                Viewership Trends
+              </CardTitle>
+              <Badge variant="outline" className="text-xs">
+                Last 10 minutes
+              </Badge>
+            </div>
+            <CardDescription>Real-time viewer count over time</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[200px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={connectionHistory}>
+                  <defs>
+                    <linearGradient id="colorLive" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
+                    </linearGradient>
+                    <linearGradient id="colorVod" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                  <XAxis 
+                    dataKey="time" 
+                    tick={{ fontSize: 10 }} 
+                    className="text-muted-foreground"
+                  />
+                  <YAxis 
+                    tick={{ fontSize: 10 }} 
+                    className="text-muted-foreground"
+                  />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: 'hsl(var(--card))', 
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '6px'
+                    }}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="live"
+                    stroke="#ef4444"
+                    fillOpacity={1}
+                    fill="url(#colorLive)"
+                    name="Live TV"
+                    strokeWidth={2}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="vod"
+                    stroke="#f59e0b"
+                    fillOpacity={1}
+                    fill="url(#colorVod)"
+                    name="VOD"
+                    strokeWidth={2}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="flex items-center justify-center gap-6 mt-2 text-xs">
+              <div className="flex items-center gap-2">
+                <div className="h-3 w-3 rounded-full bg-red-500" />
+                <span>Live TV: {stats?.connections.live || 0}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="h-3 w-3 rounded-full bg-amber-500" />
+                <span>VOD: {stats?.connections.vod || 0}</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Server Status - System Metrics */}
       <div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Bell, Search, Menu, Check, CheckCheck, Trash2, Coins, AlertTriangle, Info, CheckCircle, XCircle, Radio, Settings } from "lucide-react";
+import { Bell, Search, Menu, Check, CheckCheck, Trash2, Coins, AlertTriangle, Info, CheckCircle, XCircle, Radio, Settings, Sun, Moon } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,7 +43,7 @@ const notificationIcons: Record<NotificationType, React.ReactNode> = {
 export function AdminHeader() {
   const router = useRouter();
   const { user, logout } = useAuthStore();
-  const { setSidebarMobileOpen } = useUIStore();
+  const { setSidebarMobileOpen, theme, setTheme } = useUIStore();
   const { data: creditBalanceData } = useCreditBalance({
     enabled: !!user,
     refetchOnWindowFocus: false,
@@ -79,6 +79,16 @@ export function AdminHeader() {
     markAllRead.mutate();
   };
 
+  const cycleTheme = () => {
+    if (theme === "dark") {
+      setTheme("light");
+    } else if (theme === "light") {
+      setTheme("system");
+    } else {
+      setTheme("dark");
+    }
+  };
+
   return (
     <header className="sticky top-0 z-30 flex flex-wrap items-center gap-3 md:gap-4 border-b bg-background px-6 md:px-8 py-4">
       {/* Mobile menu button */}
@@ -105,6 +115,22 @@ export function AdminHeader() {
 
       {/* Actions */}
       <div className="flex items-center gap-2 ml-auto">
+        {/* Theme Toggle */}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={cycleTheme}
+          title={`Theme: ${theme}`}
+        >
+          {theme === "dark" ? (
+            <Moon className="h-5 w-5" />
+          ) : theme === "light" ? (
+            <Sun className="h-5 w-5" />
+          ) : (
+            <span className="text-xs font-bold">A</span>
+          )}
+        </Button>
+
         {/* Credit balance */}
         <Badge variant="secondary" className="hidden sm:inline-flex">
           Credits: {creditBalanceData?.balance ?? "—"}
@@ -219,8 +245,7 @@ export function AdminHeader() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Settings</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push("/admin/settings")}>Settings</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className="text-destructive"

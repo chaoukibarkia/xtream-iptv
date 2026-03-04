@@ -131,6 +131,7 @@ import {
 import { formatRunningSince } from "@/lib/utils";
 import { Users, Clock } from "lucide-react";
 import { EpgAssignmentModal } from "@/components/admin/epg-assignment-modal";
+import { VideoPlayer } from "@/components/player/video-player";
 
 // This page only manages LIVE and RADIO streams
 // VOD content is managed in the dedicated /admin/vod page
@@ -249,6 +250,7 @@ function StreamTable({
   onDelete,
   onDuplicate,
   onTest,
+  onPreview,
   onToggleAlwaysOn,
   onRestartAlwaysOn,
   onLinkEpg,
@@ -266,6 +268,7 @@ function StreamTable({
   onDelete: (stream: Stream) => void;
   onDuplicate: (stream: Stream) => void;
   onTest: (stream: Stream) => void;
+  onPreview: (stream: Stream) => void;
   onToggleAlwaysOn: (stream: Stream, enable: boolean) => void;
   onRestartAlwaysOn: (stream: Stream) => void;
   onLinkEpg: (stream: Stream) => void;
@@ -536,6 +539,10 @@ function StreamTable({
                         <Play className="mr-2 h-4 w-4" />
                         Test Stream
                       </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => onPreview(stream)}>
+                        <Tv className="mr-2 h-4 w-4" />
+                        Preview
+                      </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => onEdit(stream)}>
                         <Pencil className="mr-2 h-4 w-4" />
                         Edit
@@ -787,6 +794,10 @@ function StreamTable({
                         <Play className="mr-2 h-4 w-4" />
                         Test Stream
                       </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => onPreview(stream)}>
+                        <Tv className="mr-2 h-4 w-4" />
+                        Preview
+                      </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => onEdit(stream)}>
                         <Pencil className="mr-2 h-4 w-4" />
                         Edit
@@ -881,6 +892,10 @@ export default function StreamsPage() {
   // EPG modal state
   const [isEpgModalOpen, setIsEpgModalOpen] = useState(false);
   const [epgStream, setEpgStream] = useState<Stream | null>(null);
+
+  // Preview modal state
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [previewStream, setPreviewStream] = useState<Stream | null>(null);
 
   // Fetch categories for filter
   const { data: categories } = useCategories(activeTab);
@@ -992,6 +1007,11 @@ export default function StreamsPage() {
         variant: "destructive",
       });
     }
+  };
+
+  const handlePreview = (stream: Stream) => {
+    setPreviewStream(stream);
+    setIsPreviewOpen(true);
   };
 
   const handleToggleAlwaysOn = async (stream: Stream, enable: boolean) => {
@@ -1510,6 +1530,7 @@ export default function StreamsPage() {
                   }}
                   onDuplicate={handleDuplicate}
                   onTest={handleTest}
+                  onPreview={handlePreview}
                   onToggleAlwaysOn={handleToggleAlwaysOn}
                   onRestartAlwaysOn={handleRestartAlwaysOn}
                   onLinkEpg={handleLinkEpg}
@@ -1536,6 +1557,7 @@ export default function StreamsPage() {
                   }}
                   onDuplicate={handleDuplicate}
                   onTest={handleTest}
+                  onPreview={handlePreview}
                   onToggleAlwaysOn={handleToggleAlwaysOn}
                   onRestartAlwaysOn={handleRestartAlwaysOn}
                   onLinkEpg={handleLinkEpg}
@@ -1892,6 +1914,28 @@ export default function StreamsPage() {
           }}
         />
       )}
+
+      {/* Stream Preview Modal */}
+      <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
+        <DialogContent className="max-w-4xl w-full">
+          <DialogHeader>
+            <DialogTitle>Preview: {previewStream?.name}</DialogTitle>
+            <DialogDescription>
+              Live preview of the stream
+            </DialogDescription>
+          </DialogHeader>
+          <div className="aspect-video bg-black rounded-lg overflow-hidden">
+            {previewStream && (
+              <VideoPlayer
+                src={`${process.env.NEXT_PUBLIC_API_URL?.replace('/api', '')}/streaming/${previewStream.id}/preview.m3u8`}
+                title={previewStream.name}
+                autoPlay
+                isAdminPreview
+              />
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

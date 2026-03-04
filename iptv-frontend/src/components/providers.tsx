@@ -5,6 +5,7 @@ import { useState, useEffect, type ReactNode } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
 import { useSessionTimeout } from "@/hooks/useSessionTimeout";
+import { useUIStore } from "@/stores/uiStore";
 
 interface ProvidersProps {
   children: ReactNode;
@@ -13,6 +14,58 @@ interface ProvidersProps {
 // Component that handles session timeout checking
 function SessionManager({ children }: { children: ReactNode }) {
   useSessionTimeout();
+  return <>{children}</>;
+}
+
+// Theme initializer - applies theme from storage on mount
+function ThemeInitializer({ children }: { children: ReactNode }) {
+  const { theme, setTheme } = useUIStore();
+  
+  useEffect(() => {
+    // Apply theme on mount
+    const applyTheme = (themeValue: string) => {
+      const root = document.documentElement;
+      root.classList.remove("light", "dark");
+      
+      if (themeValue === "system") {
+        const systemTheme = window.matchMedia(
+          "(prefers-color-scheme: dark)"
+        ).matches
+          ? "dark"
+          : "light";
+        root.classList.add(systemTheme);
+      } else {
+        root.classList.add(themeValue);
+      }
+    };
+    
+    // Get persisted theme (need to access storage directly since we want initial value)
+    const stored = localStorage.getItem("ui-storage");
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        if (parsed.state?.theme) {
+          applyTheme(parsed.state.theme);
+        }
+      } catch {
+        applyTheme("dark");
+      }
+    } else {
+      applyTheme("dark");
+    }
+    
+    // Listen for system theme changes
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const handleChange = () => {
+      const currentTheme = useUIStore.getState().theme;
+      if (currentTheme === "system") {
+        applyTheme("system");
+      }
+    };
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
+  
   return <>{children}</>;
 }
 
@@ -73,9 +126,11 @@ export function Providers({ children }: ProvidersProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <SessionManager>
-          {children}
-        </SessionManager>
+        <ThemeInitializer>
+          <SessionManager>
+            {children}
+          </SessionManager>
+        </ThemeInitializer>
       </TooltipProvider>
       <Toaster />
       <ReactQueryDevtoolsWrapper />
