@@ -1,0 +1,39 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="lb_browse_rows_margin_top">70dp</dimen>
+    <dimen name="lb_browse_rows_margin_left">280dp</dimen>
+
+    <dimen name="lb_browse_padding_left">280dp</dimen>
+    <item name="browsePaddingTop" type="dimen">100dp</item>
+    <dimen name="lb_browse_item_vertical_margin">130dp</dimen>
+
+    <item name="lb_view_dimmed_level" type="fraction">60%</item>
+    <dimen name="lb_details_v2_card_height">430dp</dimen>
+    <dimen name="genre_corner">12dp</dimen>
+    <dimen name="half_padding">8dp</dimen>
+    <dimen name="full_padding">16dp</dimen>
+    <dimen name="item_padding">18dp</dimen>
+    <dimen name="iptvleftpadding">10dp</dimen>
+    <dimen name="text_size">18sp</dimen>
+    <dimen name="accountinfotext_size">21sp</dimen>
+    <dimen name="iptvitemssize">15sp</dimen>
+    <dimen name="tvgenresize">21dp</dimen>
+    <dimen name="tvgenresizen">17dp</dimen>
+    <dimen name="paddingtopgenre">50dp</dimen>
+    <dimen name="paddingprogrammetop">50dp</dimen>
+    <dimen name="listviewmaskheight">100dp</dimen>
+    <dimen name="arrowtop">0.7</dimen>
+    <dimen name="programmbottom">10dp</dimen>
+    <dimen name="posterheight">150dp</dimen>
+    <dimen name="filmssize">35sp</dimen>
+    <dimen name="filmsgenre">17sp</dimen>
+    <dimen name="tvshowposterheight">130dp</dimen>
+    <dimen name="tvshowposterwidth">150dp</dimen>
+    <dimen name="accounttop">40dp</dimen>
+    <dimen name="exit_text_size">19sp</dimen>
+    <dimen name="bottomG">0.8</dimen>
+    <dimen name="filmdetailswidth">130dp</dimen>
+    <dimen name="filmdetailsheight">212dp</dimen>
+</resources>

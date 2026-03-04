@@ -1,0 +1,22 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowBackground">@drawable/zebrasplash</item>
+    </style>
+    <style name="PersonCardTheme" parent="Theme.Leanback">
+        <item name="imageCardViewImageStyle">@style/PersonCardViewStyle</item>
+    </style>
+
+    <style name="PersonCardViewStyle" parent="Widget.Leanback.ImageCardView.ImageStyle">
+        <item name="android:layout_width">250dp</item>
+        <item name="android:layout_height">180dp</item>
+    </style>
+    <style name="Theme.nobar.Leanback" parent="Theme.Leanback">
+        <item name="android:windowFullscreen">true</item>
+    </style>
+</resources>

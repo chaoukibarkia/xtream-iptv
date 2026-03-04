@@ -1,0 +1,173 @@
+# ============================================
+# Pre-built NVIDIA FFmpeg Edge Server Image
+# ============================================
+# Build once, deploy to many edge servers
+#
+# Build: docker build -t iptv-edge:nvidia -f Dockerfile.edge-nvidia .
+# Push:  docker tag iptv-edge:nvidia your-registry/iptv-edge:nvidia && docker push your-registry/iptv-edge:nvidia
+#
+# This image includes:
+# - FFmpeg 6.1.1 with full NVIDIA NVENC/NVDEC support
+# - Node.js 20 runtime
+# - All required libraries for hardware transcoding
+# ============================================
+
+# Stage 1: Build FFmpeg with NVIDIA support
+FROM nvidia/cuda:12.2.0-devel-ubuntu22.04 AS ffmpeg-builder
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    autoconf automake build-essential cmake git-core \
+    libass-dev libfreetype6-dev libgnutls28-dev \
+    libmp3lame-dev libnuma-dev libopus-dev libsdl2-dev \
+    libtool libva-dev libvdpau-dev libvorbis-dev libvpx-dev \
+    libx264-dev libx265-dev libxcb1-dev libxcb-shm0-dev \
+    libxcb-xfixes0-dev meson nasm ninja-build pkg-config \
+    texinfo wget yasm zlib1g-dev libfdk-aac-dev libtheora-dev \
+    libwebp-dev libsrt-gnutls-dev libxml2-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /build
+
+# Install NVIDIA codec headers
+RUN git clone --depth 1 https://git.videolan.org/git/ffmpeg/nv-codec-headers.git && \
+    cd nv-codec-headers && \
+    make install && \
+    cd .. && rm -rf nv-codec-headers
+
+# Build FFmpeg with NVIDIA support
+ARG FFMPEG_VERSION=6.1.1
+RUN wget -q https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.xz && \
+    tar xf ffmpeg-${FFMPEG_VERSION}.tar.xz && \
+    cd ffmpeg-${FFMPEG_VERSION} && \
+    ./configure \
+        --prefix=/opt/ffmpeg \
+        --extra-cflags="-I/usr/local/cuda/include" \
+        --extra-ldflags="-L/usr/local/cuda/lib64" \
+        --enable-gpl \
+        --enable-gnutls \
+        --enable-libass \
+        --enable-libfdk-aac \
+        --enable-libfreetype \
+        --enable-libmp3lame \
+        --enable-libopus \
+        --enable-libtheora \
+        --enable-libvorbis \
+        --enable-libvpx \
+        --enable-libwebp \
+        --enable-libx264 \
+        --enable-libx265 \
+        --enable-libxml2 \
+        --enable-libsrt \
+        --enable-nonfree \
+        --enable-cuda-nvcc \
+        --enable-cuvid \
+        --enable-nvenc \
+        --enable-nvdec \
+        --enable-libnpp \
+        --enable-version3 \
+        --disable-debug \
+        --disable-doc \
+        --disable-static \
+        --enable-shared \
+    && make -j$(nproc) \
+    && make install \
+    && cd .. && rm -rf ffmpeg-${FFMPEG_VERSION}*
+
+# Stage 2: Node.js build stage
+FROM node:20-bullseye-slim AS node-builder
+
+WORKDIR /app
+
+# Copy package files
+COPY iptv-server/package*.json ./
+
+# Install production dependencies only
+RUN npm ci --production
+
+# Copy application code
+COPY iptv-server/dist ./dist
+COPY iptv-server/prisma ./prisma
+
+# Generate Prisma client
+RUN npx prisma generate
+
+# Stage 3: Final runtime image
+FROM nvidia/cuda:12.2.0-runtime-ubuntu22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    # FFmpeg runtime libraries
+    libass9 \
+    libfreetype6 \
+    libgnutls30 \
+    libmp3lame0 \
+    libnuma1 \
+    libopus0 \
+    libtheora0 \
+    libvdpau1 \
+    libvorbis0a \
+    libvorbisenc2 \
+    libvpx7 \
+    libwebp7 \
+    libx264-163 \
+    libx265-199 \
+    libfdk-aac2 \
+    libsrt1.4-gnutls \
+    libxml2 \
+    # Utilities
+    curl \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Node.js 20
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y nodejs && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy FFmpeg from builder
+COPY --from=ffmpeg-builder /opt/ffmpeg /opt/ffmpeg
+
+# Copy FFmpeg libraries
+COPY --from=ffmpeg-builder /opt/ffmpeg/lib /usr/local/lib
+
+# Update library cache
+RUN ldconfig
+
+# Create symlinks for FFmpeg binaries
+RUN ln -s /opt/ffmpeg/bin/ffmpeg /usr/local/bin/ffmpeg && \
+    ln -s /opt/ffmpeg/bin/ffprobe /usr/local/bin/ffprobe
+
+# Copy Node.js application
+COPY --from=node-builder /app/node_modules ./node_modules
+COPY --from=node-builder /app/dist ./dist
+COPY --from=node-builder /app/prisma ./prisma
+
+# Create required directories
+RUN mkdir -p /tmp/hls-segments /var/log/iptv /var/cache/iptv
+
+# Environment variables
+ENV NODE_ENV=production
+ENV PORT=3001
+ENV FFMPEG_PATH=/opt/ffmpeg/bin/ffmpeg
+ENV FFPROBE_PATH=/opt/ffmpeg/bin/ffprobe
+ENV NVIDIA_VISIBLE_DEVICES=all
+ENV NVIDIA_DRIVER_CAPABILITIES=compute,video,utility
+ENV LD_LIBRARY_PATH=/usr/local/lib:/opt/ffmpeg/lib
+
+# Expose ports
+EXPOSE 3001 1935
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+    CMD curl -f http://localhost:3001/health || exit 1
+
+# Start server
+CMD ["node", "dist/server.js"]
+

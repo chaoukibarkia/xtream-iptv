@@ -1,0 +1,51 @@
+# ============================================
+# PostgreSQL Container - Quadlet Configuration
+# ============================================
+
+[Unit]
+Description=IPTV PostgreSQL Database
+Documentation=https://www.postgresql.org/docs/
+After=network-online.target iptv-postgres.volume.service
+Wants=network-online.target iptv-postgres.volume.service
+PartOf=iptv-pod.service
+
+[Container]
+ContainerName=iptv-postgres
+Image=docker.io/library/postgres:15-alpine
+
+# Run in the iptv-pod
+Pod=iptv-pod.service
+
+# Environment variables
+Environment=POSTGRES_USER=iptv
+Environment=POSTGRES_PASSWORD=iptv_secret
+Environment=POSTGRES_DB=iptv_db
+
+# Volume mounts
+Volume=iptv-postgres-data.volume:/var/lib/postgresql/data:Z
+
+# PostgreSQL configuration
+Exec=postgres -c max_connections=100 -c tcp_keepalives_idle=60 -c tcp_keepalives_interval=10 -c tcp_keepalives_count=6 -c idle_in_transaction_session_timeout=60000
+
+# Health check
+HealthCmd=pg_isready -U iptv -d iptv_db
+HealthInterval=10s
+HealthTimeout=5s
+HealthRetries=5
+HealthStartPeriod=10s
+
+# Security
+SecurityLabelDisable=false
+User=postgres
+
+# Resource limits (optional - uncomment to enable)
+# CPUQuota=100%
+# MemoryLimit=2G
+
+[Service]
+Restart=always
+TimeoutStartSec=120
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target iptv-pod.service

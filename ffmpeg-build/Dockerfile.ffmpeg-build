@@ -1,0 +1,122 @@
+# ============================================
+# Docker build for FFmpeg with NVIDIA Support
+# ============================================
+# This creates a portable FFmpeg binary with CUDA/NVENC support
+# that can be copied to edge servers with NVIDIA GPUs.
+#
+# Build: docker build -f Dockerfile.ffmpeg-build -t ffmpeg-nvidia-builder .
+# Extract: docker run --rm -v $(pwd)/output:/output ffmpeg-nvidia-builder
+# ============================================
+
+FROM nvidia/cuda:12.2.2-devel-ubuntu22.04 AS builder
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV FFMPEG_VERSION=6.1.1
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y \
+    autoconf automake build-essential cmake git-core \
+    libass-dev libfreetype6-dev libgnutls28-dev \
+    libmp3lame-dev libnuma-dev libopus-dev libsdl2-dev \
+    libtool libva-dev libvdpau-dev libvorbis-dev libvpx-dev \
+    libx264-dev libx265-dev libxcb1-dev libxcb-shm0-dev \
+    libxcb-xfixes0-dev meson nasm ninja-build pkg-config \
+    texinfo wget yasm zlib1g-dev libfdk-aac-dev libtheora-dev \
+    libwebp-dev libsrt-gnutls-dev libxml2-dev patchelf \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /build
+
+# Install NVIDIA codec headers
+RUN git clone https://git.videolan.org/git/ffmpeg/nv-codec-headers.git && \
+    cd nv-codec-headers && \
+    git checkout n12.1.14.0 2>/dev/null || git checkout $(git tag | sort -V | tail -1) && \
+    make install && \
+    cd .. && rm -rf nv-codec-headers
+
+# Download and extract FFmpeg
+RUN wget -q "https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.xz" && \
+    tar xf "ffmpeg-${FFMPEG_VERSION}.tar.xz" && \
+    rm "ffmpeg-${FFMPEG_VERSION}.tar.xz"
+
+WORKDIR /build/ffmpeg-${FFMPEG_VERSION}
+
+# Configure FFmpeg with NVIDIA support
+RUN ./configure \
+    --prefix=/opt/ffmpeg-nvidia \
+    --extra-cflags="-I/usr/local/cuda/include" \
+    --extra-ldflags="-L/usr/local/cuda/lib64" \
+    --enable-gpl \
+    --enable-gnutls \
+    --enable-libass \
+    --enable-libfdk-aac \
+    --enable-libfreetype \
+    --enable-libmp3lame \
+    --enable-libopus \
+    --enable-libtheora \
+    --enable-libvorbis \
+    --enable-libvpx \
+    --enable-libwebp \
+    --enable-libx264 \
+    --enable-libx265 \
+    --enable-libxml2 \
+    --enable-libsrt \
+    --enable-nonfree \
+    --enable-cuda-nvcc \
+    --enable-cuvid \
+    --enable-nvenc \
+    --enable-nvdec \
+    --enable-libnpp \
+    --enable-version3 \
+    --disable-debug \
+    --disable-doc \
+    --enable-shared \
+    --enable-static \
+    --enable-rpath
+
+# Build FFmpeg (use all available cores)
+RUN make -j$(nproc)
+
+# Install to prefix
+RUN make install
+
+# Set RPATH for portability
+RUN patchelf --set-rpath '$ORIGIN/../lib' /opt/ffmpeg-nvidia/bin/ffmpeg && \
+    patchelf --set-rpath '$ORIGIN/../lib' /opt/ffmpeg-nvidia/bin/ffprobe
+
+# Copy required CUDA libraries
+RUN mkdir -p /opt/ffmpeg-nvidia/lib/cuda && \
+    cp /usr/local/cuda/lib64/libnppc.so* /opt/ffmpeg-nvidia/lib/cuda/ 2>/dev/null || true && \
+    cp /usr/local/cuda/lib64/libnppig.so* /opt/ffmpeg-nvidia/lib/cuda/ 2>/dev/null || true && \
+    cp /usr/local/cuda/lib64/libnppicc.so* /opt/ffmpeg-nvidia/lib/cuda/ 2>/dev/null || true && \
+    cp /usr/local/cuda/lib64/libnppidei.so* /opt/ffmpeg-nvidia/lib/cuda/ 2>/dev/null || true && \
+    cp /usr/local/cuda/lib64/libcudart.so* /opt/ffmpeg-nvidia/lib/cuda/ 2>/dev/null || true
+
+# Create archive
+RUN cd /opt && tar -czvf ffmpeg-nvidia.tar.gz ffmpeg-nvidia/
+
+# Verify the build
+RUN /opt/ffmpeg-nvidia/bin/ffmpeg -version && \
+    echo "=== NVENC Encoders ===" && \
+    /opt/ffmpeg-nvidia/bin/ffmpeg -encoders 2>/dev/null | grep -i nvenc || echo "NVENC available at runtime" && \
+    echo "=== CUVID Decoders ===" && \
+    /opt/ffmpeg-nvidia/bin/ffmpeg -decoders 2>/dev/null | grep -i cuvid || echo "CUVID available at runtime"
+
+# Final stage - just the archive
+FROM alpine:latest
+
+COPY --from=builder /opt/ffmpeg-nvidia.tar.gz /ffmpeg-nvidia.tar.gz
+COPY --from=builder /opt/ffmpeg-nvidia /opt/ffmpeg-nvidia
+
+# Create a script to extract to output volume
+RUN echo '#!/bin/sh' > /extract.sh && \
+    echo 'cp /ffmpeg-nvidia.tar.gz /output/' >> /extract.sh && \
+    echo 'echo "FFmpeg archive copied to /output/ffmpeg-nvidia.tar.gz"' >> /extract.sh && \
+    echo 'echo ""' >> /extract.sh && \
+    echo 'echo "To deploy to edge server:"' >> /extract.sh && \
+    echo 'echo "  scp /output/ffmpeg-nvidia.tar.gz root@edge-server:/opt/"' >> /extract.sh && \
+    echo 'echo "  ssh root@edge-server \"cd /opt && tar -xzf ffmpeg-nvidia.tar.gz\""' >> /extract.sh && \
+    chmod +x /extract.sh
+
+CMD ["/extract.sh"]
+

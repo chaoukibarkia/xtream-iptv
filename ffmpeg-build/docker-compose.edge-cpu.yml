@@ -1,0 +1,82 @@
+# ============================================
+# IPTV Edge Server - CPU Only (No GPU Required)
+# ============================================
+# Deploy this on edge servers without GPUs
+# Uses software encoding (x264/x265)
+# ============================================
+
+version: '3.7'
+
+services:
+  edge-server:
+    build:
+      context: ..
+      dockerfile: ffmpeg-build/Dockerfile.edge-server-cpu
+    image: iptv-edge-server:cpu
+    container_name: iptv-edge
+    environment:
+      # Server Configuration
+      - NODE_ENV=production
+      - HOST=0.0.0.0
+      - PORT=3001
+      
+      # Main Panel Connection
+      - MAIN_PANEL_URL=${MAIN_PANEL_URL:-http://main-panel:3001}
+      - SERVER_API_KEY=${SERVER_API_KEY}
+      
+      # This Server Info
+      - SERVER_NAME=${SERVER_NAME:-edge-01}
+      - SERVER_TYPE=EDGE
+      - EXTERNAL_IP=${EXTERNAL_IP}
+      - INTERNAL_IP=${INTERNAL_IP:-0.0.0.0}
+      - HTTP_PORT=3001
+      - MAX_CONNECTIONS=${MAX_CONNECTIONS:-2000}
+      
+      # FFmpeg Configuration
+      - FFMPEG_PATH=/opt/ffmpeg/bin/ffmpeg
+      - FFPROBE_PATH=/opt/ffmpeg/bin/ffprobe
+      
+      # CPU Encoding Settings
+      - DEFAULT_VIDEO_CODEC=libx264
+      - DEFAULT_AUDIO_CODEC=aac
+      - X264_PRESET=${X264_PRESET:-veryfast}
+      - X264_CRF=${X264_CRF:-23}
+      - ENABLE_HARDWARE_DECODE=false
+      - ENABLE_HARDWARE_ENCODE=false
+      
+      # Thread settings (adjust based on CPU cores)
+      - FFMPEG_THREADS=${FFMPEG_THREADS:-0}
+      
+      # Redis (optional)
+      - REDIS_URL=${REDIS_URL:-}
+      
+      # Database
+      - DATABASE_URL=${DATABASE_URL}
+      
+      # JWT
+      - JWT_SECRET=${JWT_SECRET}
+    ports:
+      - "3001:3001"
+      - "1935:1935"  # RTMP if needed
+    volumes:
+      - hls-segments:/tmp/hls-segments
+      - logs:/var/log/iptv
+      - cache:/var/cache/iptv
+    deploy:
+      resources:
+        limits:
+          cpus: '${CPU_LIMIT:-4}'
+          memory: ${MEMORY_LIMIT:-4G}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  hls-segments:
+  logs:
+  cache:
+

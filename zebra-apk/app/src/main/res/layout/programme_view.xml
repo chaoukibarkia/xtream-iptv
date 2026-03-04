@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout"
+    android:layout_width="match_parent"
+    android:layoutDirection="ltr"
+    android:layout_height="match_parent">
+
+
+        <TextView
+            android:id="@+id/startView"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+
+            android:text="00:00"
+            android:paddingTop="8dp"
+            android:duplicateParentState='true'
+            android:textColor="@color/listviewtext_color"
+            android:textSize="@dimen/iptvitemssize"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline3"
+           />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:duplicateParentState='true'
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:paddingTop="8dp"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:text="programmes"
+            android:textColor="@color/listviewtext_color"
+            android:textSize="@dimen/iptvitemssize"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/guideline3"
+            app:layout_constraintStart_toEndOf="@id/ringimg" />
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="false"
+            android:layout_centerHorizontal="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:minHeight="10dp"
+            android:minWidth="220dp" />
+        <ImageView
+            android:id="@+id/ringimg"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            app:srcCompat="@drawable/ring" android:layout_marginLeft="@dimen/iptvleftpadding" app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/textView"/>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="@dimen/iptvleftguidline" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

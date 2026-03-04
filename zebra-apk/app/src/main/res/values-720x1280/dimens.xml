@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="posterheight">130dp</dimen>
+    <dimen name="tvgenresizen">8sp</dimen>
+
+</resources>

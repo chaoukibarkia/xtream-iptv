@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="bottom"
+    android:layoutDirection="ltr"
+    android:id="@+id/controlbar"
+
+    android:orientation="vertical">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/parentconstraint"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        >
+
+        <LinearLayout
+            android:id="@+id/subtitlemenu"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/selector_btn"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@id/childconstraint"
+            app:layout_constraintRight_toRightOf="parent"></LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/audiomenu"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/selector_btn"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@id/childconstraint"
+            app:layout_constraintRight_toLeftOf="@id/subtitlemenu">
+
+
+        </LinearLayout>
+
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/childconstraint"
+            android:layout_width="match_parent"
+            android:layout_height="105dp"
+            android:layout_gravity="bottom"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <android.support.constraint.Guideline
+                android:id="@+id/playerleftguideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.02"
+                app:layout_constraintLeft_toLeftOf="parent" />
+
+            <android.support.constraint.Guideline
+                android:id="@+id/playerrightguideline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.98"
+                app:layout_constraintRight_toRightOf="parent" />
+
+            <android.support.constraint.Guideline
+                android:id="@+id/playerbottomguideline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintGuide_percent="0.98" />
+
+            <android.support.constraint.Guideline
+                android:id="@+id/playertopguideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.72" />
+
+            <LinearLayout
+                android:id="@+id/relcontrol"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="90dp"
+                android:background="#000000"
+                android:layoutDirection="ltr"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="@id/playerbottomguideline"
+                app:layout_constraintLeft_toRightOf="@id/playerleftguideline"
+                app:layout_constraintRight_toLeftOf="@id/playerrightguideline"
+                app:layout_constraintTop_toTopOf="@id/playertopguideline">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingTop="4dp">
+
+
+                    <ImageButton
+                        android:id="@id/exo_rew"
+                        style="@style/ExoMediaButton.Rewind" />
+
+                    <ImageButton
+                        android:id="@id/exo_play"
+                        style="@style/ExoMediaButton.Play" />
+
+                    <ImageButton
+                        android:id="@id/exo_pause"
+                        style="@style/ExoMediaButton.Pause" />
+
+                    <ImageButton
+                        android:id="@id/exo_ffwd"
+                        style="@style/ExoMediaButton.FastForward" />
+
+                    <LinearLayout
+                        android:id="@+id/flags"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="right"
+                        android:orientation="horizontal">
+
+                        <android.support.constraint.ConstraintLayout
+                            android:id="@+id/relativeLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1">
+
+
+                            <android.support.constraint.ConstraintLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_marginEnd="8dp"
+                                app:layout_constraintEnd_toEndOf="parent">
+
+                                <Button
+                                    android:id="@+id/audiobtn"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginRight="5dp"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/selector_btn"
+                                    android:padding="5dp"
+                                    android:text="AUDIOS"
+                                    android:textColor="@color/audio_color"
+                                    android:visibility="invisible"
+                                    app:layout_constraintBaseline_toBaselineOf="@+id/subtitlebtn"
+                                    app:layout_constraintStart_toStartOf="parent" />
+
+                                <Button
+                                    android:id="@+id/subtitlebtn"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginLeft="5dp"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/selector_btn"
+                                    android:padding="5dp"
+                                    android:text="SOUS-TITRES"
+                                    android:textColor="@color/audio_color"
+                                    android:visibility="invisible"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintStart_toEndOf="@+id/audiobtn" />
+                            </android.support.constraint.ConstraintLayout>
+
+
+                        </android.support.constraint.ConstraintLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@id/exo_position"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:includeFontPadding="false"
+                        android:paddingLeft="4dp"
+                        android:paddingRight="4dp"
+                        android:textColor="#FFBEBEBE"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <com.google.android.exoplayer2.ui.DefaultTimeBar
+                        android:id="@id/exo_progress"
+                        android:layout_width="0dp"
+                        android:layout_height="26dp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:id="@id/exo_duration"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:includeFontPadding="false"
+                        android:paddingLeft="4dp"
+                        android:paddingRight="4dp"
+                        android:textColor="#FFBEBEBE"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+
+                </LinearLayout>
+            </LinearLayout>
+        </android.support.constraint.ConstraintLayout>
+
+
+    </android.support.constraint.ConstraintLayout>
+</LinearLayout>

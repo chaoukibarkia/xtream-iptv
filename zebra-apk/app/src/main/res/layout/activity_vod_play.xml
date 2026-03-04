@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" android:layoutDirection="ltr"
+    tools:context="zb.zebra.zebra.VodPlayActivity" android:background="@color/colorBlack">
+    <androidx.media3.ui.PlayerView
+        android:id="@+id/player_view"
+        android:focusable="false"
+        android:visibility="invisible"
+        android:layout_width="match_parent"
+        app:controller_layout_id="@layout/customcontrol"
+        android:layout_height="match_parent" />
+
+<LinearLayout android:id="@+id/infoblock"  android:visibility="invisible"
+    android:layout_width="match_parent" android:alpha="0.9" android:background="@color/dark_transparent"
+    android:layout_height="370dp" android:layout_margin="30dp" >
+
+    <ImageView
+        android:id="@+id/poster_imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1" android:padding="10dp"
+        android:src="@drawable/empty" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_marginTop="30dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/title_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10sp"
+            android:layout_weight="0.15"
+            android:text=""
+            android:textColor="#FFFFFF"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/desc_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+
+            android:singleLine="false"
+            android:text=""
+            android:textColor="#FFFFFF"
+            android:textSize="23sp" />
+
+    </LinearLayout>
+
+</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#88000000"
+        android:orientation="vertical">
+
+    <TextView android:id="@+id/debug_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:textSize="10sp"
+        tools:ignore="SmallSp"/>
+
+    <LinearLayout android:id="@+id/controls_root"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"/>
+    </LinearLayout>
+</FrameLayout>

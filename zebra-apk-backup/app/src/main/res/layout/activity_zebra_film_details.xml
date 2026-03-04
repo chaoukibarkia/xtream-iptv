@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutbg"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" android:layoutDirection="ltr"
+    android:background="@color/colorGray"
+    tools:context="zb.zebra.ZebraFilmDetailsActivity">
+
+    <android.support.constraint.Guideline
+        android:id="@+id/plotBottomGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.72" />
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/colorGrayTransparent"
+        app:layout_constraintBottom_toTopOf="@id/framelayout">
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/posterBottomGuideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.4" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/posterBottomGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.6" />
+
+    <FrameLayout
+        android:id="@+id/framelayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/colorBlack"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/posterBottomGuideline2">
+
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="@dimen/filmdetailswidth"
+
+        android:layout_height="@dimen/filmdetailsheight"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        android:transitionName="poster_transition"
+        app:layout_constraintBottom_toTopOf="@+id/posterBottomGuideline"
+        app:layout_constraintEnd_toStartOf="@+id/posterRightGuideline"
+        app:layout_constraintTop_toTopOf="@+id/posterTopGuideline" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/posterRightGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.23" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/posterTopGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.2" />
+
+    <TextView
+        android:id="@+id/titletextview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textColor="@android:color/white"
+        android:textSize="40dp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/posterBottomGuideline2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/posterRightGuideline"
+        app:layout_constraintTop_toTopOf="@+id/posterTopGuideline" />
+
+    <Button
+        android:id="@+id/playbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/playbtn"
+        app:layout_constraintBottom_toTopOf="@+id/posterBottomGuideline"
+        app:layout_constraintStart_toStartOf="@+id/posterRightGuideline"
+        app:layout_constraintTop_toTopOf="@+id/posterBottomGuideline2">
+
+        <requestFocus></requestFocus>
+    </Button>
+
+    <TextView
+        android:id="@+id/durationtextview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:textColor="@android:color/white"
+        app:layout_constraintStart_toStartOf="@+id/playbtn"
+        app:layout_constraintTop_toBottomOf="@+id/playbtn" />
+
+    <TextView
+        android:id="@+id/datetextview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:textColor="@android:color/white"
+        app:layout_constraintStart_toEndOf="@+id/durationtextview"
+        app:layout_constraintTop_toBottomOf="@+id/playbtn" />
+
+    <TextView
+        android:id="@+id/plotTextView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="@dimen/item_padding"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:text="TextView"
+        android:textSize="16sp"
+        android:scrollbars = "vertical"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/plotright"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/playbtn"
+        app:layout_constraintTop_toBottomOf="@+id/actorTv"
+        app:layout_constraintVertical_bias="0.157" />
+
+
+
+    <TextView
+        android:id="@+id/directorLabelTv" android:layout_marginStart="8dp" android:layout_marginTop="8dp" android:layout_marginBottom="8dp"
+        android:layout_width="wrap_content"  android:textSize="15sp"
+        android:layout_height="20dp" android:textColor="@android:color/white"
+        android:text="" app:layout_constraintTop_toBottomOf="@+id/datetextview"
+        app:layout_constraintStart_toStartOf="@+id/playbtn" />
+
+    <TextView
+        android:id="@+id/directorTv" android:layout_marginStart="8dp" android:layout_marginTop="8dp" android:layout_marginBottom="8dp"
+        android:layout_width="wrap_content"  android:textSize="15sp"
+        android:layout_height="50dp" android:textColor="@android:color/white"
+        android:text="" app:layout_constraintTop_toBottomOf="@+id/directorLabelTv"
+        app:layout_constraintStart_toStartOf="@+id/playbtn"/>
+
+    <TextView
+        android:id="@+id/actorLabelTv"
+        android:layout_width="wrap_content"
+        android:layout_height="22dp"
+        android:layout_marginStart="158dp"
+        android:layout_marginTop="8dp"
+        android:text=""
+        android:textColor="@android:color/white"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/directorLabelTv"
+        app:layout_constraintTop_toBottomOf="@+id/datetextview"/>
+
+    <TextView
+        android:id="@+id/actorTv"
+        android:layout_width="0dp"
+        android:layout_height="22dp"
+
+        android:text=""
+        android:textColor="@android:color/white"
+        android:textSize="15sp" android:ellipsize="marquee"
+        app:layout_constraintStart_toStartOf="@+id/actorLabelTv"
+        app:layout_constraintEnd_toEndOf="@id/plotright"
+        app:layout_constraintTop_toTopOf="@+id/directorTv" />
+    <android.support.constraint.Guideline
+        android:id="@+id/plotright"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" android:layoutDirection="ltr"
+        app:layout_constraintGuide_percent="0.98" />
+
+
+</android.support.constraint.ConstraintLayout>

@@ -1,0 +1,15 @@
+# ============================================
+# HLS Segments Volume
+# ============================================
+
+[Unit]
+Description=IPTV HLS Segments Volume
+
+[Volume]
+VolumeName=iptv-hls-segments
+Device=/storage-pool/xtream-data/hls-segments
+Type=none
+Options=bind
+
+[Install]
+WantedBy=multi-user.target

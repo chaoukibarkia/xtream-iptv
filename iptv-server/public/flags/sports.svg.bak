@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="900" height="600">
+  <defs>
+    <linearGradient id="sportGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e3a8a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#sportGrad)"/>
+  <circle cx="256" cy="256" r="120" fill="none" stroke="#FFFFFF" stroke-width="12"/>
+  <path d="M 256,136 L 276,200 L 340,200 L 290,240 L 310,304 L 256,264 L 202,304 L 222,240 L 172,200 L 236,200 Z" fill="#FFFFFF"/>
+</svg>

@@ -1,0 +1,563 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" android:layoutDirection="ltr"
+    android:background="@drawable/activecodebg"
+    tools:context="zb.zebra.SecretActivity">
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guidelinepassfirst"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.09" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guidelinepasslast"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.15" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guidelinepassfirst2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.21" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guidelinepasslast2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.27" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guidelinepassfirst3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.33" />
+
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guidelinepasslast3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.388" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guidelinepassfirst4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.448" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guidelinepasslast4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.508" />
+
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guidelinepassfirst5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.566" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guidelinepasslast5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.626" />
+
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guidelinepassfirst6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.684" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guidelinepasslast6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.742" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guidelinepassfirst7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.8" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guidelinepasslast7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.858" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guidelinepassfirst8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.915" />
+
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guidelinepasstop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.21" />
+
+    <TextView
+        android:id="@+id/passinput1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:text="*"
+        android:textColor="@android:color/white"
+        android:textSize="34sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@id/guidelinepassbottom"
+        app:layout_constraintEnd_toStartOf="@+id/guidelinepasslast"
+        app:layout_constraintStart_toStartOf="@+id/guidelinepassfirst"
+        app:layout_constraintTop_toBottomOf="@id/guidelinepasstop" />
+
+    <TextView
+        android:id="@+id/passinput2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="*"
+        android:textColor="@android:color/white"
+        android:textSize="34sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/guidelinepassbottom"
+        app:layout_constraintEnd_toStartOf="@+id/guidelinepassfirst2"
+        app:layout_constraintStart_toStartOf="@+id/guidelinepasslast"
+        app:layout_constraintTop_toTopOf="@+id/guidelinepasstop" />
+
+    <TextView
+        android:id="@+id/passinput3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:gravity="center"
+        android:text="*"
+        android:textColor="@android:color/white"
+        android:textSize="34sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@id/guidelinepassbottom"
+        app:layout_constraintEnd_toStartOf="@+id/guidelinepasslast2"
+        app:layout_constraintStart_toStartOf="@+id/guidelinepassfirst2"
+        app:layout_constraintTop_toBottomOf="@id/guidelinepasstop" />
+
+    <TextView
+        android:id="@+id/passinput4"
+        android:layout_width="26dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:gravity="center"
+        android:text="*"
+        android:textColor="@android:color/white"
+        android:textSize="34sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@id/guidelinepassbottom"
+        app:layout_constraintEnd_toStartOf="@+id/guidelinepassfirst3"
+        app:layout_constraintStart_toStartOf="@+id/guidelinepasslast2"
+        app:layout_constraintTop_toBottomOf="@id/guidelinepasstop" />
+
+    <TextView
+        android:id="@+id/passinput5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="*"
+        android:textColor="@android:color/white"
+        android:textSize="34sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/guidelinepasstop"
+        app:layout_constraintEnd_toStartOf="@+id/guidelinepasslast3"
+        app:layout_constraintStart_toStartOf="@+id/guidelinepassfirst3"
+        app:layout_constraintTop_toTopOf="@+id/guidelinepassbottom" />
+
+    <TextView
+        android:id="@+id/passinput6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="*"
+        android:textColor="@android:color/white"
+        android:textSize="34sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/guidelinepasstop"
+        app:layout_constraintEnd_toStartOf="@+id/guidelinepassfirst4"
+        app:layout_constraintStart_toStartOf="@+id/guidelinepasslast3"
+        app:layout_constraintTop_toTopOf="@+id/guidelinepassbottom" />
+
+    <TextView
+        android:id="@+id/passinput7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="*"
+        android:textColor="@android:color/white"
+        android:textSize="34sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/guidelinepasstop"
+        app:layout_constraintEnd_toStartOf="@+id/guidelinepasslast4"
+        app:layout_constraintStart_toStartOf="@+id/guidelinepassfirst4"
+        app:layout_constraintTop_toTopOf="@+id/guidelinepassbottom" />
+
+    <TextView
+        android:id="@+id/passinput8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="*"
+        android:textColor="@android:color/white"
+        android:textSize="34sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/guidelinepasstop"
+        app:layout_constraintEnd_toStartOf="@+id/guidelinepassfirst5"
+        app:layout_constraintStart_toStartOf="@+id/guidelinepasslast4"
+        app:layout_constraintTop_toTopOf="@+id/guidelinepassbottom" />
+
+    <TextView
+        android:id="@+id/passinput9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="*"
+        android:textColor="@android:color/white"
+        android:textSize="34sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/guidelinepasstop"
+        app:layout_constraintEnd_toStartOf="@+id/guidelinepasslast5"
+        app:layout_constraintStart_toStartOf="@+id/guidelinepassfirst5"
+        app:layout_constraintTop_toTopOf="@+id/guidelinepassbottom" />
+
+    <TextView
+        android:id="@+id/passinput10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="*"
+        android:textColor="@android:color/white"
+        android:textSize="34sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/guidelinepasstop"
+        app:layout_constraintEnd_toStartOf="@+id/guidelinepassfirst6"
+        app:layout_constraintStart_toStartOf="@+id/guidelinepasslast5"
+        app:layout_constraintTop_toTopOf="@+id/guidelinepassbottom" />
+
+    <TextView
+        android:id="@+id/passinput11"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="*"
+        android:textColor="@android:color/white"
+        android:textSize="34sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/guidelinepasstop"
+        app:layout_constraintEnd_toStartOf="@+id/guidelinepasslast6"
+        app:layout_constraintStart_toStartOf="@+id/guidelinepassfirst6"
+        app:layout_constraintTop_toTopOf="@+id/guidelinepassbottom" />
+
+    <TextView
+        android:id="@+id/passinput12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="*"
+        android:textColor="@android:color/white"
+        android:textSize="34sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/guidelinepasstop"
+        app:layout_constraintEnd_toStartOf="@+id/guidelinepassfirst7"
+        app:layout_constraintStart_toStartOf="@+id/guidelinepasslast6"
+        app:layout_constraintTop_toTopOf="@+id/guidelinepassbottom" />
+
+    <TextView
+        android:id="@+id/passinput13"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="*"
+        android:textColor="@android:color/white"
+        android:textSize="34sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/guidelinepasstop"
+        app:layout_constraintEnd_toStartOf="@+id/guidelinepasslast7"
+        app:layout_constraintStart_toStartOf="@+id/guidelinepassfirst7"
+        app:layout_constraintTop_toTopOf="@+id/guidelinepassbottom" />
+
+    <TextView
+        android:id="@+id/passinput14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="*"
+        android:textColor="@android:color/white"
+        android:textSize="34sp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/guidelinepasstop"
+        app:layout_constraintEnd_toStartOf="@+id/guidelinepassfirst8"
+        app:layout_constraintStart_toStartOf="@+id/guidelinepasslast7"
+        app:layout_constraintTop_toTopOf="@+id/guidelinepassbottom" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guidelinepassbottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.31" />
+
+
+    <TextView
+        android:id="@+id/status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="0dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp" android:text=""
+        android:gravity="center"
+        android:textColor="@android:color/white"
+        android:textSize="34sp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/pinbtngrid"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+
+    <GridLayout
+        android:id="@+id/pinbtngrid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:columnCount="3"
+        android:orientation="horizontal"
+        android:rowCount="3"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/guidelinepassbottom">
+
+        <Button
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_columnSpan="1"
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:layout_rowSpan="1"
+            android:background="@drawable/pincodeselector"
+            android:tag="1"
+            android:text="1"
+            android:textColor="@android:color/white"
+            android:textSize="40sp">
+
+            <requestFocus />
+        </Button>
+
+        <Button
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_columnSpan="1"
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:layout_rowSpan="1"
+            android:background="@drawable/pincodeselector"
+            android:tag="2"
+            android:text="2"
+            android:textColor="@android:color/white"
+            android:textSize="40sp" />
+
+        <Button
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_columnSpan="1"
+
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:layout_rowSpan="1"
+            android:background="@drawable/pincodeselector"
+            android:tag="3"
+            android:text="3"
+            android:textColor="@android:color/white"
+            android:textSize="40sp" />
+
+        <Button
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_columnSpan="1"
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:layout_rowSpan="1"
+            android:background="@drawable/pincodeselector"
+            android:tag="4"
+            android:text="4"
+            android:textColor="@android:color/white"
+            android:textSize="40sp" />
+
+        <Button
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_columnSpan="1"
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:layout_rowSpan="1"
+            android:background="@drawable/pincodeselector"
+            android:tag="5"
+            android:text="5"
+            android:textColor="@android:color/white"
+            android:textSize="40sp" />
+
+        <Button
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_columnSpan="1"
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:layout_rowSpan="1"
+            android:background="@drawable/pincodeselector"
+            android:tag="6"
+            android:text="6"
+            android:textColor="@android:color/white"
+            android:textSize="40sp" />
+
+        <Button
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_columnSpan="1"
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:layout_rowSpan="1"
+            android:background="@drawable/pincodeselector"
+            android:tag="7"
+            android:text="7"
+            android:textColor="@android:color/white"
+            android:textSize="40sp" />
+
+        <Button
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_columnSpan="1"
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:layout_rowSpan="1"
+            android:background="@drawable/pincodeselector"
+            android:tag="8"
+            android:text="8"
+            android:textColor="@android:color/white"
+            android:textSize="40sp" />
+
+        <Button
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_columnSpan="1"
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:layout_rowSpan="1"
+            android:background="@drawable/pincodeselector"
+            android:tag="9"
+            android:text="9"
+            android:textColor="@android:color/white"
+            android:textSize="40sp" />
+
+        <Button
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_columnSpan="1"
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:layout_rowSpan="1"
+            android:background="@drawable/pincodeselector"
+            android:tag="0"
+            android:text="0"
+            android:textColor="@android:color/white"
+            android:textSize="40sp" />
+
+        <Button
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_columnSpan="2"
+            android:layout_gravity="fill_horizontal"
+            android:layout_margin="5dp"
+
+            android:layout_rowSpan="1"
+            android:background="@drawable/pincodeselector"
+            android:tag="del"
+            android:text="⬅"
+            android:textColor="@android:color/white"
+            android:textSize="40sp" />
+
+    </GridLayout>
+
+
+</android.support.constraint.ConstraintLayout>

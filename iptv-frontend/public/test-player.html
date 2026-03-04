@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HLS Test Player</title>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <style>
+        body { background: #000; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        video { max-width: 100%; max-height: 90vh; }
+        #info { position: fixed; top: 10px; left: 10px; color: #0f0; font-family: monospace; background: rgba(0,0,0,0.8); padding: 10px; }
+    </style>
+</head>
+<body>
+    <div id="info">Loading...</div>
+    <video id="video" controls></video>
+    <script>
+        const video = document.getElementById('video');
+        const info = document.getElementById('info');
+        const streamUrl = '/movie/admin/admin123/5.m3u8';
+        
+        info.innerHTML = 'Stream URL: ' + streamUrl + '<br>';
+        
+        if (Hls.isSupported()) {
+            const hls = new Hls({ debug: true });
+            hls.loadSource(streamUrl);
+            hls.attachMedia(video);
+            
+            hls.on(Hls.Events.MANIFEST_PARSED, function(event, data) {
+                info.innerHTML += 'Manifest loaded, levels: ' + data.levels.length + '<br>';
+                info.innerHTML += 'Levels: ' + data.levels.map(l => l.height + 'p').join(', ') + '<br>';
+                video.play();
+            });
+            
+            hls.on(Hls.Events.ERROR, function(event, data) {
+                info.innerHTML += '<span style="color:red">Error: ' + data.type + ' - ' + data.details + '</span><br>';
+                console.error('HLS Error:', data);
+            });
+            
+            hls.on(Hls.Events.FRAG_LOADED, function(event, data) {
+                info.innerHTML += 'Fragment loaded: ' + data.frag.sn + '<br>';
+            });
+        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            video.src = streamUrl;
+            video.addEventListener('loadedmetadata', function() {
+                video.play();
+            });
+        }
+    </script>
+</body>
+</html>

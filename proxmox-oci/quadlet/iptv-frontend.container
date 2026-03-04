@@ -1,0 +1,48 @@
+# ============================================
+# Frontend Container - Quadlet Configuration
+# ============================================
+
+[Unit]
+Description=IPTV Frontend Web Application
+Documentation=https://github.com/yourorg/iptv-system
+After=network-online.target iptv-backend.service
+Wants=network-online.target
+Requires=iptv-backend.service
+PartOf=iptv-pod.service
+
+[Container]
+ContainerName=iptv-frontend
+# IMPORTANT: Change this to your actual image name/registry
+Image=localhost/iptv-frontend:latest
+
+# Run in the iptv-pod
+Pod=iptv-pod.service
+
+# Environment variables
+Environment=NODE_ENV=production
+Environment=PORT=3000
+Environment=HOSTNAME=0.0.0.0
+Environment=NEXT_TELEMETRY_DISABLED=1
+
+# Health check
+HealthCmd=wget --no-verbose --tries=1 --spider http://localhost:3000 || exit 1
+HealthInterval=30s
+HealthTimeout=10s
+HealthRetries=3
+HealthStartPeriod=30s
+
+# Security
+SecurityLabelDisable=false
+User=1001
+
+# Resource limits
+# CPUQuota=200%
+# MemoryLimit=2G
+
+[Service]
+Restart=always
+TimeoutStartSec=120
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target iptv-pod.service

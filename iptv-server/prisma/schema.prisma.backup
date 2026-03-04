@@ -1,0 +1,775 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              Int              @id @default(autoincrement())
+  username        String           @unique
+  password        String
+  email           String?
+  status          UserStatus       @default(ACTIVE)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  lastActivity    DateTime?
+  notes           String?
+  credits         Int              @default(0)
+  parentId        Int?
+  role            UserRole         @default(RESELLER)
+  iptvLines       IptvLine[]
+  parent          User?            @relation("UserHierarchy", fields: [parentId], references: [id])
+  children        User[]           @relation("UserHierarchy")
+  activationCodes ActivationCode[] @relation("ActivationCodeCreator")
+
+  // Credit transaction relations
+  creditTransactions     CreditTransaction[] @relation("UserCreditTransactions")
+  createdTransactions    CreditTransaction[] @relation("CreditTransactionCreator")
+  receivedTransfers      CreditTransaction[] @relation("CreditTransferTo")
+  sentTransfers          CreditTransaction[] @relation("CreditTransferFrom")
+
+  @@index([username, password])
+  @@index([parentId])
+  @@index([role])
+}
+
+model IptvLine {
+  id                Int              @id @default(autoincrement())
+  username          String           @unique
+  password          String
+  maxConnections    Int              @default(1)
+  expiresAt         DateTime?        @map("expiration_date")
+  isTrial           Boolean          @default(false)
+  status            IptvLineStatus   @default(active)
+  ownerId           Int?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  lastActivity      DateTime?
+  allowHls          Boolean          @default(true)
+  allowMpegts       Boolean          @default(true)
+  allowRtmp         Boolean          @default(true)
+  adminNotes        String?
+  resellerNotes     String?
+  forcedServerId    Int?
+  isMinistraPortal  Boolean          @default(false)
+  isRestreamer      Boolean          @default(false)
+  isEnigmaDevice    Boolean          @default(false)
+  isMagDevice       Boolean          @default(false)
+  magStbLock        String?
+  ispLock           Boolean          @default(false)
+  ispDescription    String?
+  forcedCountry     String?
+  allowedIps        String[]         @default([])
+  allowedUserAgents String[]         @default([])
+  customData        Json?
+  lockedDeviceId    String?
+  owner              User?            @relation(fields: [ownerId], references: [id])
+  bouquets           LineBouquet[]
+  connections        LineConnection[]
+  activatedFrom      ActivationCode?  @relation("ActivationCodeLine")
+  creditTransactions CreditTransaction[] @relation("LineCreditTransaction")
+
+  @@index([username, password])
+  @@index([ownerId])
+  @@index([status])
+  @@index([expiresAt])
+}
+
+model Stream {
+  id                 Int                        @id @default(autoincrement())
+  name               String
+  streamType         StreamType
+  categoryId         Int
+  sourceUrl          String
+  backupUrls         String[]                   @default([])
+  epgChannelId       String?
+  logoUrl            String?
+  transcodeProfile   String?
+  isActive           Boolean                    @default(true)
+  containerExtension String?
+  duration           Int?
+  releaseDate        DateTime?
+  tmdbId             Int?
+  plot               String?
+  cast               String?
+  director           String?
+  genre              String?
+  rating             Float?
+  backdropPath       String?
+  youtubeTrailer     String?
+  tvArchive          Boolean                    @default(false)
+  tvArchiveDuration  Int                        @default(0)
+  sortOrder          Int                        @default(0)
+  createdAt          DateTime                   @default(now())
+  updatedAt          DateTime                   @updatedAt
+  abrProfileId       Int?
+  alwaysOn           Boolean                    @default(false)
+  customUserAgent    String?
+  ffmpegPid          Int?
+  lastError          String?
+  lastStartedAt      DateTime?
+  lastStoppedAt      DateTime?
+  runningServerId    Int?
+  streamStatus       StreamStatus               @default(STOPPED)
+  transcodeProfileId Int?
+  transcodeServerId  Int?
+  originServerId     Int?
+  analyzeDuration    Int?
+  probeSize          Int?
+  bouquets           BouquetStream[]
+  epgData            EpgEntry[]
+  serverAssignments  ServerStream[]
+  abrProfile         AbrProfile?                @relation("StreamAbrProfile", fields: [abrProfileId], references: [id])
+  category           Category                   @relation(fields: [categoryId], references: [id])
+  originServer       Server?                    @relation("StreamOriginServer", fields: [originServerId], references: [id])
+  transcodingProfile TranscodingProfile?        @relation("StreamTranscodeProfile", fields: [transcodeProfileId], references: [id])
+  serverDistribution StreamServerDistribution[]
+  subtitles          Subtitle[]
+  sourceChecks       StreamSourceCheck[]
+
+  // Source status tracking
+  sourceStatus       SourceStatus               @default(UNKNOWN)
+  lastSourceCheck    DateTime?
+  onlineSourceCount  Int                        @default(0)
+  totalSourceCount   Int                        @default(1)
+
+  @@index([streamType, categoryId])
+  @@index([epgChannelId])
+  @@index([originServerId])
+  @@index([streamStatus])
+  @@index([isActive])
+  @@index([alwaysOn])
+  @@index([sourceStatus])
+}
+
+model Category {
+  id        Int        @id @default(autoincrement())
+  name      String
+  type      StreamType
+  parentId  Int?
+  sortOrder Int        @default(0)
+  isActive  Boolean    @default(true)
+  parent    Category?  @relation("SubCategories", fields: [parentId], references: [id])
+  children  Category[] @relation("SubCategories")
+  streams   Stream[]
+
+  @@index([type])
+}
+
+model Series {
+  id             Int       @id @default(autoincrement())
+  name           String
+  cover          String?
+  plot           String?
+  cast           String?
+  director       String?
+  genre          String?
+  releaseDate    DateTime?
+  rating         Float?
+  rating5        Float?
+  tmdbId         Int?
+  backdropPath   String[]  @default([])
+  youtubeTrailer String?
+  episodeRunTime String?
+  categoryId     Int
+  lastModified   DateTime  @default(now())
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  episodes       Episode[]
+
+  @@index([categoryId])
+}
+
+model Episode {
+  id                 Int       @id @default(autoincrement())
+  seriesId           Int
+  seasonNumber       Int
+  episodeNumber      Int
+  title              String?
+  plot               String?
+  duration           Int?
+  releaseDate        DateTime?
+  rating             Float?
+  sourceUrl          String
+  backupUrls         String[]  @default([])
+  containerExtension String?
+  cover              String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  series             Series    @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+
+  @@unique([seriesId, seasonNumber, episodeNumber])
+}
+
+model Subtitle {
+  id            Int      @id @default(autoincrement())
+  streamId      Int
+  language      String
+  languageLabel String?
+  format        String   @default("srt")
+  isDefault     Boolean  @default(false)
+  isForced      Boolean  @default(false)
+  sourceUrl     String?
+  content       String?
+  filePath      String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  stream        Stream   @relation(fields: [streamId], references: [id], onDelete: Cascade)
+
+  @@index([streamId])
+}
+
+model StreamSourceCheck {
+  id                  Int          @id @default(autoincrement())
+  streamId            Int
+  sourceUrl           String       @db.Text
+  isPrimary           Boolean      @default(false)
+  status              SourceStatus @default(UNKNOWN)
+  lastChecked         DateTime?
+  lastOnlineAt        DateTime?
+  lastError           String?
+  responseTimeMs      Int?
+  consecutiveFailures Int          @default(0)
+  stream              Stream       @relation(fields: [streamId], references: [id], onDelete: Cascade)
+
+  @@unique([streamId, sourceUrl])
+  @@index([streamId])
+  @@index([status])
+  @@index([lastChecked])
+}
+
+model Bouquet {
+  id        Int             @id @default(autoincrement())
+  name      String
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  parentId  Int?
+  parent    Bouquet?        @relation("SubBouquets", fields: [parentId], references: [id])
+  children  Bouquet[]       @relation("SubBouquets")
+  streams   BouquetStream[]
+  lines     LineBouquet[]
+
+  @@index([parentId])
+}
+
+model BouquetStream {
+  id        Int     @id @default(autoincrement())
+  bouquetId Int
+  streamId  Int
+  bouquet   Bouquet @relation(fields: [bouquetId], references: [id], onDelete: Cascade)
+  stream    Stream  @relation(fields: [streamId], references: [id], onDelete: Cascade)
+
+  @@unique([bouquetId, streamId])
+}
+
+model LineBouquet {
+  id        Int      @id @default(autoincrement())
+  lineId    Int
+  bouquetId Int
+  bouquet   Bouquet  @relation(fields: [bouquetId], references: [id], onDelete: Cascade)
+  line      IptvLine @relation(fields: [lineId], references: [id], onDelete: Cascade)
+
+  @@unique([lineId, bouquetId])
+}
+
+model ActivationCode {
+  id               Int                  @id @default(autoincrement())
+  code             String               @unique @db.VarChar(14)
+  status           ActivationCodeStatus @default(UNUSED)
+
+  // Preset config for created IptvLine
+  bouquetIds       Int[]                @default([])
+  maxConnections   Int                  @default(1)
+  subscriptionDays Int                  @default(30)
+  isTrial          Boolean              @default(false)
+
+  // Code validity (optional)
+  codeExpiresAt    DateTime?
+
+  // Creator
+  createdById      Int
+  createdBy        User                 @relation("ActivationCodeCreator", fields: [createdById], references: [id])
+
+  // Usage tracking
+  usedAt           DateTime?
+  usedByLineId     Int?                 @unique
+  usedByLine       IptvLine?            @relation("ActivationCodeLine", fields: [usedByLineId], references: [id])
+  usedFromIp       String?
+  usedDeviceId     String?
+
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+
+  @@index([code])
+  @@index([status])
+  @@index([createdById])
+
+  creditTransactions CreditTransaction[] @relation("CodeCreditTransaction")
+}
+
+// Credit System Models
+model CreditPackage {
+  id          Int      @id @default(autoincrement())
+  name        String   // e.g., "30 Day Package", "1 Year Package"
+  credits     Int      // Credits required
+  days        Int      // Subscription days granted
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isActive])
+}
+
+model CreditTransaction {
+  id            Int                   @id @default(autoincrement())
+  userId        Int                   // Reseller receiving/spending credits
+  user          User                  @relation("UserCreditTransactions", fields: [userId], references: [id])
+  type          CreditTransactionType
+  amount        Int                   // Positive for additions, negative for deductions
+  balanceBefore Int                   // Balance before transaction
+  balanceAfter  Int                   // Balance after transaction
+
+  // For top-ups (payment tracking)
+  isPaid       Boolean? // null for non-top-ups
+  paymentNotes String?  // "Bank transfer ref: ABC123"
+
+  // For deductions (line/code creation)
+  relatedLineId Int?
+  relatedLine   IptvLine? @relation("LineCreditTransaction", fields: [relatedLineId], references: [id])
+  relatedCodeId Int?
+  relatedCode   ActivationCode? @relation("CodeCreditTransaction", fields: [relatedCodeId], references: [id])
+
+  // For transfers between resellers
+  transferToId   Int?  // Sub-reseller who received (for TRANSFER_OUT)
+  transferTo     User? @relation("CreditTransferTo", fields: [transferToId], references: [id])
+  transferFromId Int?  // Parent who sent (for TRANSFER_IN)
+  transferFrom   User? @relation("CreditTransferFrom", fields: [transferFromId], references: [id])
+
+  // Metadata
+  description String?
+  createdById Int?    // Admin/reseller who initiated
+  createdBy   User?   @relation("CreditTransactionCreator", fields: [createdById], references: [id])
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([type])
+  @@index([isPaid])
+  @@index([createdAt])
+  @@index([createdById])
+}
+
+model EpgSource {
+  id             Int       @id @default(autoincrement())
+  name           String
+  url            String
+  lastImport     DateTime?
+  isActive       Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  channelCount   Int       @default(0)
+  lastError      String?
+  status         String    @default("active")
+  updateInterval Int       @default(6)
+}
+
+model EpgChannel {
+  id           String   @id
+  displayName  String?
+  iconUrl      String?
+  programCount Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([displayName])
+}
+
+model EpgEntry {
+  id          Int      @id @default(autoincrement())
+  streamId    Int
+  channelId   String
+  start       DateTime
+  end         DateTime
+  title       String
+  description String?
+  language    String?
+  stream      Stream   @relation(fields: [streamId], references: [id], onDelete: Cascade)
+
+  @@index([streamId, start, end])
+  @@index([channelId])
+}
+
+model LineConnection {
+  id            String      @id @default(uuid())
+  lineId        Int
+  streamId      Int
+  serverId      Int?
+  ipAddress     String
+  userAgent     String?
+  countryCode   String?
+  startedAt     DateTime    @default(now())
+  contentName   String?
+  contentType   ContentType @default(LIVE)
+  episodeId     Int?
+  episodeNumber Int?
+  seasonNumber  Int?
+  line          IptvLine    @relation(fields: [lineId], references: [id], onDelete: Cascade)
+  server        Server?     @relation("LineConnectionServer", fields: [serverId], references: [id])
+
+  @@index([lineId])
+  @@index([streamId])
+  @@index([serverId])
+  @@index([startedAt])
+  @@index([contentType])
+}
+
+model Server {
+  id                  Int                        @id @default(autoincrement())
+  name                String                     @unique
+  type                ServerType
+  status              ServerStatus               @default(OFFLINE)
+  internalIp          String
+  externalIp          String
+  httpPort            Int                        @default(80)
+  httpsPort           Int                        @default(443)
+  rtmpPort            Int?                       @default(1935)
+  apiPort             Int                        @default(8080)
+  apiKey              String                     @unique
+  maxBandwidthMbps    Int                        @default(10000)
+  currentBandwidth    Int                        @default(0)
+  maxConnections      Int                        @default(5000)
+  currentConnections  Int                        @default(0)
+  cpuUsage            Float                      @default(0)
+  memoryUsage         Float                      @default(0)
+  region              String?
+  country             String?
+  latitude            Float?
+  longitude           Float?
+  canTranscode        Boolean                    @default(true)
+  transcodeProfiles   String[]                   @default(["passthrough", "h264_720p", "h264_1080p"])
+  supportsHls         Boolean                    @default(true)
+  supportsMpegts      Boolean                    @default(true)
+  supportsRtmp        Boolean                    @default(false)
+  lastHeartbeat       DateTime?
+  lastHealthCheck     DateTime?
+  healthScore         Int                        @default(100)
+  failedChecks        Int                        @default(0)
+  createdAt           DateTime                   @default(now())
+  updatedAt           DateTime                   @updatedAt
+  currentTranscodes   Int                        @default(0)
+  domain              String?
+  hasNvenc            Boolean                    @default(false)
+  hasQsv              Boolean                    @default(false)
+  hasVaapi            Boolean                    @default(false)
+  maxTranscodes       Int                        @default(10)
+  nvencGpuModel       String?
+  nvencMaxSessions    Int                        @default(0)
+  qsvModel            String?
+  vaapiDevice         String?
+  lineConnections     LineConnection[]           @relation("LineConnectionServer")
+  activeConnections   ServerConnection[]
+  streamAssignments   ServerStream[]
+  originStreams       Stream[]                   @relation("StreamOriginServer")
+  streamDistributions StreamServerDistribution[]
+
+  @@index([type, status])
+  @@index([region])
+  @@index([status])
+  @@index([hasNvenc])
+  @@index([healthScore])
+}
+
+model ServerStream {
+  id        Int     @id @default(autoincrement())
+  serverId  Int
+  streamId  Int
+  isActive  Boolean @default(false)
+  viewers   Int     @default(0)
+  bandwidth Int     @default(0)
+  priority  Int     @default(100)
+  server    Server  @relation(fields: [serverId], references: [id], onDelete: Cascade)
+  stream    Stream  @relation(fields: [streamId], references: [id], onDelete: Cascade)
+
+  @@unique([serverId, streamId])
+  @@index([streamId])
+}
+
+model StreamServerDistribution {
+  id               Int              @id @default(autoincrement())
+  streamId         Int
+  serverId         Int
+  role             DistributionRole @default(CHILD)
+  tier             Int              @default(0)
+  pullFromServerId Int?
+  isActive         Boolean          @default(true)
+  priority         Int              @default(100)
+  viewers          Int              @default(0)
+  bandwidth        Int              @default(0)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  server           Server           @relation(fields: [serverId], references: [id], onDelete: Cascade)
+  stream           Stream           @relation(fields: [streamId], references: [id], onDelete: Cascade)
+
+  @@unique([streamId, serverId])
+  @@index([streamId])
+  @@index([serverId])
+  @@index([pullFromServerId])
+  @@index([tier])
+}
+
+model ServerConnection {
+  id        String   @id @default(uuid())
+  serverId  Int
+  userId    Int
+  streamId  Int
+  ipAddress String
+  startedAt DateTime @default(now())
+  bandwidth Int      @default(0)
+  server    Server   @relation(fields: [serverId], references: [id], onDelete: Cascade)
+
+  @@index([serverId])
+  @@index([userId])
+}
+
+model LoadBalancerRule {
+  id              Int         @id @default(autoincrement())
+  name            String
+  priority        Int         @default(100)
+  isActive        Boolean     @default(true)
+  matchRegion     String?
+  matchCountry    String?
+  matchStreamType StreamType?
+  matchCategoryId Int?
+  routeType       RouteType   @default(ROUND_ROBIN)
+  targetServerIds Int[]
+  createdAt       DateTime    @default(now())
+
+  @@index([isActive, priority])
+}
+
+model TranscodingProfile {
+  id               Int          @id @default(autoincrement())
+  name             String       @unique
+  description      String?
+  encodingMode     EncodingMode @default(SOFTWARE)
+  videoCodec       String       @default("h264")
+  videoPreset      String       @default("medium")
+  videoBitrate     Int?
+  videoBitrateMode String       @default("cbr")
+  crfValue         Int?
+  maxBitrate       Int?
+  bufferSize       Int?
+  resolutionWidth  Int?
+  resolutionHeight Int?
+  resolutionPreset String?
+  scalingAlgorithm String       @default("lanczos")
+  frameRate        Float?
+  frameRateMode    String       @default("cfr")
+  gopSize          Int          @default(60)
+  bFrames          Int          @default(2)
+  audioCodec       String       @default("aac")
+  audioBitrate     Int          @default(128)
+  audioSampleRate  Int          @default(48000)
+  audioChannels    Int          @default(2)
+  nvencEnabled     Boolean      @default(false)
+  nvencPreset      String?
+  nvencRcMode      String?
+  nvencTuning      String?
+  nvencBFrames     Int?
+  nvencLookahead   Int?
+  qsvEnabled       Boolean      @default(false)
+  qsvPreset        String?
+  vaapiEnabled     Boolean      @default(false)
+  vaapiDevice      String?
+  additionalParams String?
+  customUserAgent  String?
+  isDefault        Boolean      @default(false)
+  isActive         Boolean      @default(true)
+  requiresGpu      Boolean      @default(false)
+  estimatedCpuLoad Float        @default(50)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  streams          Stream[]     @relation("StreamTranscodeProfile")
+
+  @@index([encodingMode])
+  @@index([isActive])
+}
+
+model SystemLog {
+  id         Int      @id @default(autoincrement())
+  timestamp  DateTime @default(now())
+  level      LogLevel
+  source     String
+  message    String
+  details    Json?
+  streamId   Int?
+  userId     Int?
+  serverId   Int?
+  ipAddress  String?
+  userAgent  String?
+  errorCode  String?
+  stackTrace String?
+
+  @@index([timestamp])
+  @@index([level])
+  @@index([source])
+  @@index([streamId])
+  @@index([userId])
+}
+
+model SystemSettings {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  value     String
+  type      String   @default("string")
+  updatedAt DateTime @updatedAt
+
+  @@index([key])
+}
+
+model AbrProfile {
+  id                 Int          @id @default(autoincrement())
+  name               String       @unique
+  description        String?
+  encodingMode       EncodingMode @default(SOFTWARE)
+  variants           Json         @default("[]")
+  audioCodec         String       @default("aac")
+  audioSampleRate    Int          @default(48000)
+  audioChannels      Int          @default(2)
+  videoCodec         String       @default("h264")
+  videoPreset        String       @default("medium")
+  gopSize            Int          @default(60)
+  bFrames            Int          @default(2)
+  frameRateMode      String       @default("cfr")
+  hlsSegmentDuration Int          @default(4)
+  hlsPlaylistSize    Int          @default(5)
+  hlsDeleteThreshold Int          @default(1)
+  nvencEnabled       Boolean      @default(false)
+  nvencPreset        String?
+  qsvEnabled         Boolean      @default(false)
+  vaapiEnabled       Boolean      @default(false)
+  vaapiDevice        String?
+  additionalParams   String?
+  isDefault          Boolean      @default(false)
+  isActive           Boolean      @default(true)
+  requiresGpu        Boolean      @default(false)
+  estimatedCpuLoad   Float        @default(100)
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+  streams            Stream[]     @relation("StreamAbrProfile")
+
+  @@index([encodingMode])
+  @@index([isActive])
+}
+
+enum UserRole {
+  ADMIN
+  RESELLER
+  SUB_RESELLER
+}
+
+enum UserStatus {
+  ACTIVE
+  BANNED
+  DISABLED
+  EXPIRED
+}
+
+enum IptvLineStatus {
+  active   @map("ACTIVE")
+  banned   @map("BANNED")
+  disabled @map("DISABLED")
+  expired  @map("EXPIRED")
+}
+
+enum StreamType {
+  LIVE
+  VOD
+  SERIES
+  RADIO
+}
+
+enum StreamStatus {
+  STOPPED
+  STARTING
+  RUNNING
+  STOPPING
+  ERROR
+  RESTARTING
+}
+
+enum ContentType {
+  LIVE
+  VOD
+  SERIES
+  RADIO
+}
+
+enum ServerType {
+  MAIN
+  LOAD_BALANCER
+  EDGE_STREAMER
+  TRANSCODER
+}
+
+enum ServerStatus {
+  ONLINE
+  OFFLINE
+  MAINTENANCE
+  OVERLOADED
+  DEGRADED
+}
+
+enum DistributionRole {
+  ORIGIN
+  CHILD
+}
+
+enum RouteType {
+  ROUND_ROBIN
+  LEAST_CONNECTIONS
+  LEAST_BANDWIDTH
+  GEOGRAPHIC
+  WEIGHTED
+  FAILOVER
+}
+
+enum EncodingMode {
+  SOFTWARE
+  NVENC
+  QSV
+  VAAPI
+  PASSTHROUGH
+}
+
+enum LogLevel {
+  DEBUG
+  INFO
+  WARNING
+  ERROR
+  CRITICAL
+}
+
+enum ActivationCodeStatus {
+  UNUSED
+  USED
+  EXPIRED
+  REVOKED
+}
+
+enum CreditTransactionType {
+  TOP_UP       // Admin/parent adds credits
+  DEDUCTION    // Credits spent on line/code
+  REFUND       // Credits returned
+  TRANSFER_IN  // Received from parent reseller
+  TRANSFER_OUT // Sent to sub-reseller
+}
+
+enum SourceStatus {
+  ONLINE
+  OFFLINE
+  UNKNOWN
+}

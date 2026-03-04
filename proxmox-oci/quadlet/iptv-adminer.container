@@ -1,0 +1,36 @@
+# ============================================
+# Adminer Container - Quadlet Configuration
+# ============================================
+# Optional database management UI
+# Start with: systemctl start iptv-adminer.service
+# ============================================
+
+[Unit]
+Description=IPTV Adminer Database UI (Optional)
+Documentation=https://www.adminer.org/
+After=network-online.target iptv-postgres.service
+Wants=network-online.target
+Requires=iptv-postgres.service
+PartOf=iptv-pod.service
+
+[Container]
+ContainerName=iptv-adminer
+Image=docker.io/library/adminer:latest
+
+# Run in the iptv-pod
+Pod=iptv-pod.service
+
+# Environment variables
+Environment=ADMINER_DEFAULT_SERVER=localhost
+
+# Security
+SecurityLabelDisable=false
+
+[Service]
+Restart=no
+TimeoutStartSec=60
+TimeoutStopSec=30
+
+[Install]
+# Not enabled by default - start manually when needed
+# WantedBy=multi-user.target iptv-pod.service

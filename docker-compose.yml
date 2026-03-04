@@ -1,0 +1,197 @@
+# ============================================
+# IPTV System - Docker Compose
+# ============================================
+# Run: docker-compose up -d
+# Logs: docker-compose logs -f
+# Stop: docker-compose down
+# ============================================
+
+version: '3.7'
+
+services:
+  # ==========================================
+  # Frontend - Next.js Application
+  # ==========================================
+  frontend:
+    build:
+      context: ./iptv-frontend
+      dockerfile: Dockerfile
+      args:
+        # IMPORTANT: Use localhost because this runs in the browser, not inside Docker
+        - NEXT_PUBLIC_API_URL=http://localhost:3001
+        - NEXT_PUBLIC_TMDB_IMAGE_BASE=https://image.tmdb.org/t/p
+        - NEXT_PUBLIC_ADMIN_API_KEY=admin-secret-key
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      # IMPORTANT: Use Docker service name for server-side API proxy rewrites
+      - BACKEND_URL=http://backend:3001
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - iptv-network
+
+  # ==========================================
+  # Backend - Fastify API Server
+  # ==========================================
+  backend:
+    build:
+      context: ./iptv-server
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      # Server
+      - NODE_ENV=production
+      - HOST=0.0.0.0
+      - PORT=3001
+      
+      # Database (with connection pool settings to prevent connection resets)
+      - DATABASE_URL=postgresql://iptv:iptv_secret@postgres:5432/iptv_db?connection_limit=20&pool_timeout=30&connect_timeout=30
+      
+      # Redis
+      - REDIS_URL=redis://redis:6379
+      
+      # Server URLs (update for production)
+      - SERVER_URL=http://localhost
+      - SERVER_PORT=3001
+      - SERVER_HTTPS_PORT=443
+      - SERVER_RTMP_PORT=1935
+      - SERVER_TIMEZONE=UTC
+      
+      # FFmpeg
+      - FFMPEG_PATH=/usr/bin/ffmpeg
+      
+      # Logging
+      - LOG_LEVEL=info
+      
+      # TMDB Integration
+      - TMDB_API_KEY=${TMDB_API_KEY:-b49ab0aaf0228313ed15fcd51ee854b5}
+      - TMDB_LANGUAGE=en-US
+      - TMDB_INCLUDE_ADULT=false
+      - TMDB_RATE_LIMIT_MS=250
+      
+      # Admin API
+      - ADMIN_API_KEY=${ADMIN_API_KEY:-admin-secret-key}
+      
+      # JWT Secret
+      - JWT_SECRET=${JWT_SECRET:-iptv-super-secret-jwt-key-change-in-production-min-32-chars}
+    depends_on:
+      - postgres
+      - redis
+    restart: unless-stopped
+    volumes:
+      - hls-segments:/tmp/hls-segments
+      - image-cache:/var/cache/iptv/images
+      - logs:/var/log/iptv
+    networks:
+      - iptv-network
+
+  # ==========================================
+  # PostgreSQL Database
+  # ==========================================
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=iptv
+      - POSTGRES_PASSWORD=iptv_secret
+      - POSTGRES_DB=iptv_db
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    command:
+      - "postgres"
+      - "-c"
+      - "max_connections=100"
+      - "-c"
+      - "tcp_keepalives_idle=60"
+      - "-c"
+      - "tcp_keepalives_interval=10"
+      - "-c"
+      - "tcp_keepalives_count=6"
+      - "-c"
+      - "idle_in_transaction_session_timeout=60000"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U iptv -d iptv_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - iptv-network
+
+  # ==========================================
+  # Redis Cache
+  # ==========================================
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - iptv-network
+
+  # ==========================================
+  # Adminer - Database Management UI
+  # Start with: docker-compose up -d adminer
+  # ==========================================
+  adminer:
+    image: adminer:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - ADMINER_DEFAULT_SERVER=postgres
+    depends_on:
+      - postgres
+    restart: "no"
+    networks:
+      - iptv-network
+
+  # ==========================================
+  # Redis Commander - Redis Management UI
+  # Start with: docker-compose up -d redis-commander
+  # ==========================================
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    ports:
+      - "8081:8081"
+    depends_on:
+      - redis
+    restart: "no"
+    networks:
+      - iptv-network
+
+# ==========================================
+# Volumes
+# ==========================================
+volumes:
+  postgres-data:
+    driver: local
+  redis-data:
+    driver: local
+  hls-segments:
+    driver: local
+  image-cache:
+    driver: local
+  logs:
+    driver: local
+
+# ==========================================
+# Networks
+# ==========================================
+networks:
+  iptv-network:
+    driver: bridge

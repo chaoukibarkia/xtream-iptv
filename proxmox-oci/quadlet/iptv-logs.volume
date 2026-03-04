@@ -1,0 +1,15 @@
+# ============================================
+# Logs Volume
+# ============================================
+
+[Unit]
+Description=IPTV Logs Volume
+
+[Volume]
+VolumeName=iptv-logs
+Device=/storage-pool/xtream-data/logs
+Type=none
+Options=bind
+
+[Install]
+WantedBy=multi-user.target

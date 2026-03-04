@@ -1,0 +1,33 @@
+# ============================================
+# IPTV Pod - Podman Quadlet Configuration
+# ============================================
+# This creates a pod (similar to Kubernetes) where all containers
+# share the same network namespace
+# ============================================
+
+[Unit]
+Description=IPTV System Pod
+Documentation=https://github.com/yourorg/iptv-system
+After=network-online.target
+Wants=network-online.target
+
+[Pod]
+# Pod name
+PodName=iptv-pod
+
+# Publish ports to host
+PublishPort=3000:3000
+PublishPort=3001:3001
+PublishPort=5432:5432
+PublishPort=6379:6379
+PublishPort=8080:8080
+
+# Network mode
+Network=bridge
+
+[Service]
+Restart=always
+TimeoutStartSec=900
+
+[Install]
+WantedBy=multi-user.target default.target

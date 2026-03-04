@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="accounttop">10dp</dimen>
+    <dimen name="posterheight">308dp</dimen>
+    <dimen name="bottomG">0.8</dimen>
+    <dimen name="tvgenresizen">8sp</dimen>
+
+</resources>

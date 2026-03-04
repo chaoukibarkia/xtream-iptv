@@ -1,0 +1,68 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name">Z☰BRA</string>
+
+    <string name="title_activity_login">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password (optional)</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="video">Video</string>
+
+    <string name="audio">Audio</string>
+
+    <string name="text">Text</string>
+
+    <string name="selection_disabled">Desactivé</string>
+
+    <string name="selection_default">Default</string>
+
+    <string name="unexpected_intent_action">Unexpected intent action: <xliff:g id="action">%1$s</xliff:g></string>
+
+    <string name="enable_random_adaptation">Enable random adaptation</string>
+
+    <string name="error_drm_not_supported">Protected content not supported on API levels below 18</string>
+
+    <string name="error_drm_unsupported_scheme">This device does not support the required DRM scheme</string>
+
+    <string name="error_drm_unknown">An unknown DRM error occurred</string>
+
+    <string name="error_no_decoder">This device does not provide a decoder for <xliff:g id="mime_type">%1$s</xliff:g></string>
+
+    <string name="error_no_secure_decoder">This device does not provide a secure decoder for <xliff:g id="mime_type">%1$s</xliff:g></string>
+
+    <string name="error_querying_decoders">Unable to query device decoders</string>
+
+    <string name="error_instantiating_decoder">Unable to instantiate decoder <xliff:g id="decoder_name">%1$s</xliff:g></string>
+
+    <string name="error_unsupported_video">Media includes video tracks, but none are playable by this device</string>
+
+    <string name="error_unsupported_audio">Media includes audio tracks, but none are playable by this device</string>
+
+    <string name="storage_permission_denied">Permission to access storage was denied</string>
+
+    <string name="sample_list_load_error">One or more sample lists failed to load</string>
+
+    <string name="ima_not_loaded">Playing sample without ads, as the IMA extension was not loaded</string>
+    <string name="playstate">playstate</string>
+    <string name="appverupdate_update_available">Available a new update!</string>
+    <string name="appverupdater_content_update_available">Update %1$s mobile app to version %2$s</string>
+    <string name="appverupdater_notes_update_available">Update %1$s mobile app to version %2$s \nFeatures: \n%3$s</string>
+    <string name="appverupdater_positivetext_update_available">Update</string>
+    <string name="appverupdater_negativetext_update_available">Later</string>
+    <!-- AlertDialog Not Update Available -->
+    <string name="appverupdate_not_update_available">No updates available!</string>
+    <string name="appverupdater_content_not_update_available">You have the latest version of the application</string>
+    <!-- ProgressDialog Update Available -->
+    <string name="appverupdater_progressdialog_message_update_available">Download</string>
+    <!-- AlertDialog Denied Permissin -->
+    <string name="appverupdater_denied_message">If you reject permission,you can not use this service</string>
+</resources>

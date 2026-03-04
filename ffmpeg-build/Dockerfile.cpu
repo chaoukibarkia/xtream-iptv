@@ -1,0 +1,151 @@
+# ============================================
+# FFmpeg Build - CPU Only (No GPU Required)
+# ============================================
+# Optimized for software encoding with:
+# - x264/x265 with threading
+# - libvpx for VP8/VP9
+# - AV1 (SVT-AV1, dav1d)
+# - All common audio codecs
+# ============================================
+
+FROM ubuntu:22.04 AS builder
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y \
+    autoconf \
+    automake \
+    build-essential \
+    cmake \
+    git \
+    libass-dev \
+    libfreetype6-dev \
+    libgnutls28-dev \
+    libmp3lame-dev \
+    libnuma-dev \
+    libopus-dev \
+    libsdl2-dev \
+    libtool \
+    libva-dev \
+    libvdpau-dev \
+    libvorbis-dev \
+    libvpx-dev \
+    libx264-dev \
+    libx265-dev \
+    libxcb1-dev \
+    libxcb-shm0-dev \
+    libxcb-xfixes0-dev \
+    meson \
+    nasm \
+    ninja-build \
+    pkg-config \
+    texinfo \
+    wget \
+    yasm \
+    zlib1g-dev \
+    libfdk-aac-dev \
+    libtheora-dev \
+    libwebp-dev \
+    libaom-dev \
+    libdav1d-dev \
+    libsvtav1-dev \
+    libsrt-gnutls-dev \
+    libxml2-dev \
+    libopenjp2-7-dev \
+    librav1e-dev \
+    libvidstab-dev \
+    libzimg-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /build
+
+# Clone and build FFmpeg
+ARG FFMPEG_VERSION=6.1.1
+RUN wget https://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.xz && \
+    tar xf ffmpeg-${FFMPEG_VERSION}.tar.xz && \
+    mv ffmpeg-${FFMPEG_VERSION} ffmpeg
+
+WORKDIR /build/ffmpeg
+
+# Configure FFmpeg with optimized CPU encoding
+RUN ./configure \
+    --prefix=/opt/ffmpeg \
+    --pkg-config-flags="--static" \
+    --extra-libs="-lpthread -lm" \
+    --enable-gpl \
+    --enable-gnutls \
+    --enable-libass \
+    --enable-libfdk-aac \
+    --enable-libfreetype \
+    --enable-libmp3lame \
+    --enable-libopus \
+    --enable-libtheora \
+    --enable-libvorbis \
+    --enable-libvpx \
+    --enable-libwebp \
+    --enable-libx264 \
+    --enable-libx265 \
+    --enable-libxml2 \
+    --enable-libsrt \
+    --enable-libaom \
+    --enable-libdav1d \
+    --enable-libsvtav1 \
+    --enable-libopenjpeg \
+    --enable-libvidstab \
+    --enable-libzimg \
+    --enable-nonfree \
+    --enable-version3 \
+    --disable-debug \
+    --disable-doc \
+    && make -j$(nproc) \
+    && make install
+
+# ============================================
+# Runtime image
+# ============================================
+FROM ubuntu:22.04 AS runtime
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libass9 \
+    libfreetype6 \
+    libgnutls30 \
+    libmp3lame0 \
+    libnuma1 \
+    libopus0 \
+    libtheora0 \
+    libvdpau1 \
+    libvorbis0a \
+    libvorbisenc2 \
+    libvpx7 \
+    libwebp7 \
+    libx264-163 \
+    libx265-199 \
+    libfdk-aac2 \
+    libsrt1.4-gnutls \
+    libxml2 \
+    libaom3 \
+    libdav1d5 \
+    libsvtav1enc1 \
+    libopenjp2-7 \
+    libvidstab1.1 \
+    libzimg2 \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy FFmpeg binaries
+COPY --from=builder /opt/ffmpeg/bin/ffmpeg /opt/ffmpeg/bin/ffmpeg
+COPY --from=builder /opt/ffmpeg/bin/ffprobe /opt/ffmpeg/bin/ffprobe
+
+# Create symlinks
+RUN ln -s /opt/ffmpeg/bin/ffmpeg /usr/local/bin/ffmpeg && \
+    ln -s /opt/ffmpeg/bin/ffprobe /usr/local/bin/ffprobe
+
+# Verify installation
+RUN ffmpeg -version && ffmpeg -encoders | head -50
+
+CMD ["ffmpeg", "-version"]
+

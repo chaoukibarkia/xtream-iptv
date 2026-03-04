@@ -1,0 +1,15 @@
+# ============================================
+# PostgreSQL Data Volume
+# ============================================
+
+[Unit]
+Description=IPTV PostgreSQL Data Volume
+
+[Volume]
+VolumeName=iptv-postgres-data
+Device=/storage-pool/xtream-data/postgres
+Type=none
+Options=bind
+
+[Install]
+WantedBy=multi-user.target

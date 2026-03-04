@@ -1,0 +1,89 @@
+# ============================================
+# Backend Container - Quadlet Configuration
+# ============================================
+
+[Unit]
+Description=IPTV Backend API Server
+Documentation=https://github.com/yourorg/iptv-system
+After=network-online.target iptv-postgres.service iptv-redis.service iptv-hls.volume.service iptv-cache.volume.service iptv-logs.volume.service
+Wants=network-online.target
+Requires=iptv-postgres.service iptv-redis.service
+PartOf=iptv-pod.service
+
+[Container]
+ContainerName=iptv-backend
+# IMPORTANT: Change this to your actual image name/registry
+Image=localhost/iptv-backend:latest
+
+# Run in the iptv-pod (shares network with postgres/redis on localhost)
+Pod=iptv-pod.service
+
+# Volume mounts
+Volume=iptv-hls-segments.volume:/tmp/hls-segments:Z
+Volume=iptv-image-cache.volume:/var/cache/iptv/images:Z
+Volume=iptv-logs.volume:/var/log/iptv:Z
+
+# Environment variables - Server
+Environment=NODE_ENV=production
+Environment=HOST=0.0.0.0
+Environment=PORT=3001
+
+# Environment variables - Database
+# Note: Using localhost because we're in the same pod as postgres
+Environment=DATABASE_URL=postgresql://iptv:iptv_secret@localhost:5432/iptv_db?connection_limit=20&pool_timeout=30&connect_timeout=30
+
+# Environment variables - Redis
+# Note: Using localhost because we're in the same pod as redis
+Environment=REDIS_URL=redis://localhost:6379
+
+# Environment variables - Server URLs (CHANGE FOR PRODUCTION!)
+Environment=SERVER_URL=http://localhost
+Environment=SERVER_PORT=3001
+Environment=SERVER_HTTPS_PORT=443
+Environment=SERVER_RTMP_PORT=1935
+Environment=SERVER_TIMEZONE=UTC
+
+# Environment variables - FFmpeg
+Environment=FFMPEG_PATH=/usr/bin/ffmpeg
+
+# Environment variables - Logging
+Environment=LOG_LEVEL=info
+
+# Environment variables - TMDB Integration
+Environment=TMDB_API_KEY=b49ab0aaf0228313ed15fcd51ee854b5
+Environment=TMDB_LANGUAGE=en-US
+Environment=TMDB_INCLUDE_ADULT=false
+Environment=TMDB_RATE_LIMIT_MS=250
+
+# Environment variables - Security
+Environment=ADMIN_API_KEY=admin-secret-key
+Environment=JWT_SECRET=iptv-super-secret-jwt-key-change-in-production-min-32-chars
+
+# Health check
+HealthCmd=curl -f http://localhost:3001/health || exit 1
+HealthInterval=30s
+HealthTimeout=10s
+HealthRetries=3
+HealthStartPeriod=30s
+
+# Security
+SecurityLabelDisable=false
+User=1001
+
+# Resource limits (adjust based on load)
+# CPUQuota=400%
+# MemoryLimit=4G
+
+# For GPU support (NVIDIA), uncomment these:
+# SecurityLabelDisable=true
+# Device=/dev/nvidia0
+# Device=/dev/nvidiactl
+# Device=/dev/nvidia-uvm
+
+[Service]
+Restart=always
+TimeoutStartSec=120
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target iptv-pod.service

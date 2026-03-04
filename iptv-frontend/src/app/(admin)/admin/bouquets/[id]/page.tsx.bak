@@ -1,0 +1,724 @@
+"use client";
+
+import { useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import {
+  ArrowLeft,
+  Package,
+  Tv,
+  Users,
+  Plus,
+  Trash2,
+  Loader2,
+  Search,
+  X,
+  Film,
+  Radio,
+  Pencil,
+  Check,
+} from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useToast } from "@/hooks/use-toast";
+
+import {
+  useBouquet,
+  useUpdateBouquet,
+  useAddStreamsToBouquet,
+  useRemoveStreamsFromBouquet,
+  useAddUsersToBouquet,
+  useRemoveUsersFromBouquet,
+} from "@/lib/api/hooks/useBouquets";
+import { useStreams } from "@/lib/api/hooks/useStreams";
+import { useUsers } from "@/lib/api/hooks/useUsers";
+
+const streamTypeIcons: Record<string, React.ElementType> = {
+  LIVE: Tv,
+  VOD: Film,
+  SERIES: Film,
+  RADIO: Radio,
+};
+
+export default function BouquetDetailsPage() {
+  const params = useParams();
+  const router = useRouter();
+  const { toast } = useToast();
+  const bouquetId = parseInt(params.id as string);
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [editName, setEditName] = useState("");
+  const [addStreamsOpen, setAddStreamsOpen] = useState(false);
+  const [addUsersOpen, setAddUsersOpen] = useState(false);
+  const [streamSearch, setStreamSearch] = useState("");
+  const [userSearch, setUserSearch] = useState("");
+  const [selectedStreamIds, setSelectedStreamIds] = useState<number[]>([]);
+  const [selectedUserIds, setSelectedUserIds] = useState<number[]>([]);
+  const [removingStreamIds, setRemovingStreamIds] = useState<Set<number>>(new Set());
+  const [removingUserIds, setRemovingUserIds] = useState<Set<number>>(new Set());
+
+  const { data: bouquet, isLoading } = useBouquet(bouquetId);
+  const { data: streamsData } = useStreams({ pageSize: 1000 });
+  const { data: usersData } = useUsers({ pageSize: 1000 });
+
+  const updateBouquet = useUpdateBouquet();
+  const addStreams = useAddStreamsToBouquet();
+  const removeStreams = useRemoveStreamsFromBouquet();
+  const addUsers = useAddUsersToBouquet();
+  const removeUsers = useRemoveUsersFromBouquet();
+
+  // Get streams not in this bouquet
+  const existingStreamIds = new Set(bouquet?.streams.map((s) => s.streamId) || []);
+  const availableStreams = streamsData?.data?.filter(
+    (s) => !existingStreamIds.has(s.id) && s.name.toLowerCase().includes(streamSearch.toLowerCase())
+  ) || [];
+
+  // Get users not in this bouquet
+  const existingUserIds = new Set(bouquet?.users.map((u) => u.userId) || []);
+  const availableUsers = usersData?.data?.filter(
+    (u) => !existingUserIds.has(u.id) && u.username.toLowerCase().includes(userSearch.toLowerCase())
+  ) || [];
+
+  const handleSaveName = async () => {
+    if (!editName.trim()) return;
+
+    try {
+      await updateBouquet.mutateAsync({ id: bouquetId, data: { name: editName } });
+      toast({ title: "Success", description: "Bouquet name updated" });
+      setIsEditing(false);
+    } catch (error: any) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    }
+  };
+
+  const handleAddStreams = async () => {
+    if (selectedStreamIds.length === 0) return;
+
+    try {
+      await addStreams.mutateAsync({ bouquetId, streamIds: selectedStreamIds });
+      toast({
+        title: "Success",
+        description: `Added ${selectedStreamIds.length} stream(s) to bouquet`,
+      });
+      setAddStreamsOpen(false);
+      setSelectedStreamIds([]);
+      setStreamSearch("");
+    } catch (error: any) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    }
+  };
+
+  const handleRemoveStream = async (streamId: number) => {
+    setRemovingStreamIds((prev) => new Set(prev).add(streamId));
+
+    try {
+      await removeStreams.mutateAsync({ bouquetId, streamIds: [streamId] });
+      toast({ title: "Success", description: "Stream removed from bouquet" });
+    } catch (error: any) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    } finally {
+      setRemovingStreamIds((prev) => {
+        const next = new Set(prev);
+        next.delete(streamId);
+        return next;
+      });
+    }
+  };
+
+  const handleAddUsers = async () => {
+    if (selectedUserIds.length === 0) return;
+
+    try {
+      await addUsers.mutateAsync({ bouquetId, userIds: selectedUserIds });
+      toast({
+        title: "Success",
+        description: `Added ${selectedUserIds.length} user(s) to bouquet`,
+      });
+      setAddUsersOpen(false);
+      setSelectedUserIds([]);
+      setUserSearch("");
+    } catch (error: any) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    }
+  };
+
+  const handleRemoveUser = async (userId: number) => {
+    setRemovingUserIds((prev) => new Set(prev).add(userId));
+
+    try {
+      await removeUsers.mutateAsync({ bouquetId, userIds: [userId] });
+      toast({ title: "Success", description: "User removed from bouquet" });
+    } catch (error: any) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    } finally {
+      setRemovingUserIds((prev) => {
+        const next = new Set(prev);
+        next.delete(userId);
+        return next;
+      });
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6 p-6">
+        <Skeleton className="h-8 w-64" />
+        <Skeleton className="h-32 w-full" />
+        <Skeleton className="h-64 w-full" />
+      </div>
+    );
+  }
+
+  if (!bouquet) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[50vh]">
+        <Package className="h-16 w-16 text-muted-foreground mb-4" />
+        <h2 className="text-xl font-semibold">Bouquet not found</h2>
+        <Button variant="outline" className="mt-4" onClick={() => router.push("/admin/bouquets")}>
+          Back to Bouquets
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6 p-3 sm:p-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
+        <Button variant="ghost" size="icon" onClick={() => router.push("/admin/bouquets")} className="flex-shrink-0">
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
+        <div className="flex-1 min-w-0">
+          {isEditing ? (
+            <div className="flex items-center gap-2">
+              <Input
+                value={editName}
+                onChange={(e) => setEditName(e.target.value)}
+                className="max-w-sm text-2xl font-bold h-10"
+                autoFocus
+              />
+              <Button size="icon" onClick={handleSaveName} disabled={updateBouquet.isPending}>
+                <Check className="h-4 w-4" />
+              </Button>
+              <Button size="icon" variant="ghost" onClick={() => setIsEditing(false)}>
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          ) : (
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+              <h1 className="text-2xl sm:text-3xl font-bold">{bouquet.name}</h1>
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={() => {
+                  setEditName(bouquet.name);
+                  setIsEditing(true);
+                }}
+              >
+                <Pencil className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
+          <p className="text-muted-foreground">
+            Created {new Date(bouquet.createdAt).toLocaleDateString()}
+          </p>
+        </div>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Streams in Bouquet</CardTitle>
+            <Tv className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{bouquet._count.streams}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Users with Access</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{bouquet._count.users}</div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Tabs */}
+      <Tabs defaultValue="streams">
+        <TabsList>
+          <TabsTrigger value="streams" className="gap-2">
+            <Tv className="h-4 w-4" />
+            Streams ({bouquet._count.streams})
+          </TabsTrigger>
+          <TabsTrigger value="users" className="gap-2">
+            <Users className="h-4 w-4" />
+            Users ({bouquet._count.users})
+          </TabsTrigger>
+        </TabsList>
+
+        {/* Streams Tab */}
+        <TabsContent value="streams">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>Streams</CardTitle>
+                <CardDescription>Streams included in this bouquet</CardDescription>
+              </div>
+              <Button onClick={() => setAddStreamsOpen(true)}>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Streams
+              </Button>
+            </CardHeader>
+            <CardContent>
+              {bouquet.streams.length === 0 ? (
+                <div className="text-center py-8">
+                  <Tv className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                  <p className="text-muted-foreground">No streams in this bouquet</p>
+                  <Button variant="outline" className="mt-4" onClick={() => setAddStreamsOpen(true)}>
+                    Add Streams
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  {/* Mobile Cards View */}
+                  <div className="md:hidden space-y-3">
+                    {bouquet.streams.map((bs) => {
+                      const Icon = streamTypeIcons[bs.stream.streamType] || Tv;
+                      return (
+                        <Card key={bs.id} className="overflow-hidden">
+                          <CardContent className="p-4">
+                            <div className="flex items-start gap-3">
+                              <div className="h-10 w-10 rounded bg-muted flex items-center justify-center flex-shrink-0">
+                                {bs.stream.logoUrl ? (
+                                  <img
+                                    src={bs.stream.logoUrl}
+                                    alt={bs.stream.name}
+                                    className="h-8 w-8 object-contain"
+                                  />
+                                ) : (
+                                  <Icon className="h-5 w-5 text-muted-foreground" />
+                                )}
+                              </div>
+                              <div className="flex-1 min-w-0 space-y-1">
+                                <span className="font-medium truncate block">{bs.stream.name}</span>
+                                <div className="flex flex-wrap gap-1.5">
+                                  <Badge variant="outline" className="text-xs">{bs.stream.streamType}</Badge>
+                                  <span className="text-xs text-muted-foreground">
+                                    {bs.stream.category?.name || "Uncategorized"}
+                                  </span>
+                                </div>
+                              </div>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="flex-shrink-0"
+                                onClick={() => handleRemoveStream(bs.streamId)}
+                                disabled={removingStreamIds.has(bs.streamId)}
+                              >
+                                {removingStreamIds.has(bs.streamId) ? (
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                  <Trash2 className="h-4 w-4 text-red-500" />
+                                )}
+                              </Button>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                  </div>
+
+                  {/* Desktop Table View */}
+                  <div className="hidden md:block overflow-x-auto">
+                  <Table className="min-w-[500px]">
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Stream</TableHead>
+                        <TableHead>Type</TableHead>
+                        <TableHead>Category</TableHead>
+                        <TableHead className="w-[50px]"></TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {bouquet.streams.map((bs) => {
+                        const Icon = streamTypeIcons[bs.stream.streamType] || Tv;
+                        return (
+                          <TableRow key={bs.id}>
+                            <TableCell>
+                              <div className="flex items-center gap-3">
+                                <div className="h-10 w-10 rounded bg-muted flex items-center justify-center">
+                                  {bs.stream.logoUrl ? (
+                                    <img
+                                      src={bs.stream.logoUrl}
+                                      alt={bs.stream.name}
+                                      className="h-8 w-8 object-contain"
+                                    />
+                                  ) : (
+                                    <Icon className="h-5 w-5 text-muted-foreground" />
+                                  )}
+                                </div>
+                                <span className="font-medium">{bs.stream.name}</span>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant="outline">{bs.stream.streamType}</Badge>
+                            </TableCell>
+                            <TableCell>
+                              <span className="text-muted-foreground">
+                                {bs.stream.category?.name || "Uncategorized"}
+                              </span>
+                            </TableCell>
+                            <TableCell>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleRemoveStream(bs.streamId)}
+                                disabled={removingStreamIds.has(bs.streamId)}
+                              >
+                                {removingStreamIds.has(bs.streamId) ? (
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                  <Trash2 className="h-4 w-4 text-red-500" />
+                                )}
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                  </div>
+                </>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Users Tab */}
+        <TabsContent value="users">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>Users</CardTitle>
+                <CardDescription>Users with access to this bouquet</CardDescription>
+              </div>
+              <Button onClick={() => setAddUsersOpen(true)}>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Users
+              </Button>
+            </CardHeader>
+            <CardContent>
+              {bouquet.users.length === 0 ? (
+                <div className="text-center py-8">
+                  <Users className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                  <p className="text-muted-foreground">No users assigned to this bouquet</p>
+                  <Button variant="outline" className="mt-4" onClick={() => setAddUsersOpen(true)}>
+                    Add Users
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  {/* Mobile Cards View */}
+                  <div className="md:hidden space-y-3">
+                    {bouquet.users.map((bu) => (
+                      <Card key={bu.id} className="overflow-hidden">
+                        <CardContent className="p-4">
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="flex-1 min-w-0 space-y-1">
+                              <span className="font-medium truncate block">{bu.user.username}</span>
+                              <span className="text-xs text-muted-foreground truncate block">
+                                {bu.user.email || "No email"}
+                              </span>
+                              <Badge
+                                variant={bu.user.status === "ACTIVE" ? "default" : "secondary"}
+                                className={`text-xs ${
+                                  bu.user.status === "ACTIVE"
+                                    ? "bg-green-500/20 text-green-400"
+                                    : ""
+                                }`}
+                              >
+                                {bu.user.status}
+                              </Badge>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="flex-shrink-0"
+                              onClick={() => handleRemoveUser(bu.userId)}
+                              disabled={removingUserIds.has(bu.userId)}
+                            >
+                              {removingUserIds.has(bu.userId) ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                <Trash2 className="h-4 w-4 text-red-500" />
+                              )}
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+
+                  {/* Desktop Table View */}
+                  <div className="hidden md:block overflow-x-auto">
+                    <Table className="min-w-[500px]">
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Username</TableHead>
+                        <TableHead>Email</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead className="w-[50px]"></TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {bouquet.users.map((bu) => (
+                        <TableRow key={bu.id}>
+                          <TableCell className="font-medium">{bu.user.username}</TableCell>
+                          <TableCell className="text-muted-foreground">
+                            {bu.user.email || "—"}
+                          </TableCell>
+                          <TableCell>
+                            <Badge
+                              variant={bu.user.status === "ACTIVE" ? "default" : "secondary"}
+                              className={
+                                bu.user.status === "ACTIVE"
+                                  ? "bg-green-500/20 text-green-400"
+                                  : ""
+                              }
+                            >
+                              {bu.user.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleRemoveUser(bu.userId)}
+                              disabled={removingUserIds.has(bu.userId)}
+                            >
+                              {removingUserIds.has(bu.userId) ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                <Trash2 className="h-4 w-4 text-red-500" />
+                              )}
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                  </div>
+                </>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+
+      {/* Add Streams Dialog */}
+      <Dialog open={addStreamsOpen} onOpenChange={setAddStreamsOpen}>
+        <DialogContent className="max-w-2xl max-h-[80vh]">
+          <DialogHeader>
+            <DialogTitle>Add Streams to Bouquet</DialogTitle>
+            <DialogDescription>
+              Select streams to add to &quot;{bouquet.name}&quot;
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search streams..."
+                value={streamSearch}
+                onChange={(e) => setStreamSearch(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <div className="border rounded-lg max-h-[40vh] overflow-y-auto">
+              {availableStreams.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  No available streams found
+                </div>
+              ) : (
+                <Table>
+                  <TableBody>
+                    {availableStreams.slice(0, 50).map((stream) => {
+                      const Icon = streamTypeIcons[stream.streamType] || Tv;
+                      return (
+                        <TableRow key={stream.id}>
+                          <TableCell className="w-[40px]">
+                            <Checkbox
+                              checked={selectedStreamIds.includes(stream.id)}
+                              onCheckedChange={(checked) => {
+                                if (checked) {
+                                  setSelectedStreamIds([...selectedStreamIds, stream.id]);
+                                } else {
+                                  setSelectedStreamIds(
+                                    selectedStreamIds.filter((id) => id !== stream.id)
+                                  );
+                                }
+                              }}
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-3">
+                              <div className="h-8 w-8 rounded bg-muted flex items-center justify-center">
+                                <Icon className="h-4 w-4 text-muted-foreground" />
+                              </div>
+                              <div>
+                                <p className="font-medium">{stream.name}</p>
+                                <p className="text-xs text-muted-foreground">
+                                  {stream.category?.name}
+                                </p>
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline">{stream.streamType}</Badge>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              )}
+            </div>
+            {selectedStreamIds.length > 0 && (
+              <p className="text-sm text-muted-foreground">
+                {selectedStreamIds.length} stream(s) selected
+              </p>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setAddStreamsOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleAddStreams}
+              disabled={selectedStreamIds.length === 0 || addStreams.isPending}
+            >
+              {addStreams.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              Add {selectedStreamIds.length > 0 && `(${selectedStreamIds.length})`}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Users Dialog */}
+      <Dialog open={addUsersOpen} onOpenChange={setAddUsersOpen}>
+        <DialogContent className="max-w-2xl max-h-[80vh]">
+          <DialogHeader>
+            <DialogTitle>Add Users to Bouquet</DialogTitle>
+            <DialogDescription>
+              Select users to grant access to &quot;{bouquet.name}&quot;
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search users..."
+                value={userSearch}
+                onChange={(e) => setUserSearch(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <div className="border rounded-lg max-h-[40vh] overflow-y-auto">
+              {availableUsers.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  No available users found
+                </div>
+              ) : (
+                <Table>
+                  <TableBody>
+                    {availableUsers.slice(0, 50).map((user) => (
+                      <TableRow key={user.id}>
+                        <TableCell className="w-[40px]">
+                          <Checkbox
+                            checked={selectedUserIds.includes(user.id)}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                setSelectedUserIds([...selectedUserIds, user.id]);
+                              } else {
+                                setSelectedUserIds(
+                                  selectedUserIds.filter((id) => id !== user.id)
+                                );
+                              }
+                            }}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <div>
+                            <p className="font-medium">{user.username}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {user.email || "No email"}
+                            </p>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            variant={user.status === "ACTIVE" ? "default" : "secondary"}
+                            className={
+                              user.status === "ACTIVE"
+                                ? "bg-green-500/20 text-green-400"
+                                : ""
+                            }
+                          >
+                            {user.status === "ACTIVE" ? "Active" : user.status}
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </div>
+            {selectedUserIds.length > 0 && (
+              <p className="text-sm text-muted-foreground">
+                {selectedUserIds.length} user(s) selected
+              </p>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setAddUsersOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleAddUsers}
+              disabled={selectedUserIds.length === 0 || addUsers.isPending}
+            >
+              {addUsers.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              Add {selectedUserIds.length > 0 && `(${selectedUserIds.length})`}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+

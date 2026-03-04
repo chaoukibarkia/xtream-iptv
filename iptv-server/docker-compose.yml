@@ -1,0 +1,99 @@
+# ============================================
+# IPTV Backend - Standalone Docker Compose
+# ============================================
+# Use the root docker-compose.yml for full system
+# This file is for backend-only development
+# ============================================
+
+version: '3.7'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - HOST=0.0.0.0
+      - PORT=3001
+      - DATABASE_URL=postgresql://iptv:iptv_secret@postgres:5432/iptv_db
+      - REDIS_URL=redis://redis:6379
+      - SERVER_URL=http://localhost
+      - SERVER_PORT=3001
+      - SERVER_HTTPS_PORT=443
+      - SERVER_RTMP_PORT=1935
+      - FFMPEG_PATH=/usr/bin/ffmpeg
+      - LOG_LEVEL=info
+      - TMDB_API_KEY=${TMDB_API_KEY:-}
+      - TMDB_LANGUAGE=en-US
+      - ADMIN_API_KEY=${ADMIN_API_KEY:-admin-key}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    volumes:
+      - hls-segments:/tmp/hls-segments
+      - image-cache:/var/cache/iptv/images
+    networks:
+      - iptv-network
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=iptv
+      - POSTGRES_PASSWORD=iptv_secret
+      - POSTGRES_DB=iptv_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U iptv -d iptv_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - iptv-network
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - iptv-network
+
+  adminer:
+    image: adminer:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - ADMINER_DEFAULT_SERVER=postgres
+    depends_on:
+      - postgres
+    restart: "no"
+    networks:
+      - iptv-network
+
+volumes:
+  postgres-data:
+  redis-data:
+  hls-segments:
+  image-cache:
+
+networks:
+  iptv-network:
+    driver: bridge

@@ -1,0 +1,15 @@
+# ============================================
+# Redis Data Volume
+# ============================================
+
+[Unit]
+Description=IPTV Redis Data Volume
+
+[Volume]
+VolumeName=iptv-redis-data
+Device=/storage-pool/xtream-data/redis
+Type=none
+Options=bind
+
+[Install]
+WantedBy=multi-user.target

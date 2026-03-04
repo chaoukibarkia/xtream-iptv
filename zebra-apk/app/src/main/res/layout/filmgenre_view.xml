@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout"
+    android:layout_width="match_parent" android:layoutDirection="ltr"
+    android:background="@drawable/channelitembgselector"
+    android:layout_height="70dp">
+
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="0dp"
+            android:layout_height="70dp"
+
+            android:layout_marginStart="20dp"
+            android:duplicateParentState='true'
+            android:gravity="center_vertical"
+            android:textColor="@color/tv_showtext_color"
+            android:textSize="@dimen/iptvitemssize"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

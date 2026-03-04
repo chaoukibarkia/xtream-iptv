@@ -1,0 +1,788 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/iptvconstraint"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBlack"
+    android:orientation="horizontal" android:layoutDirection="ltr"
+    tools:context="zb.zebra.AdultActivity">
+
+
+    <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+        android:id="@+id/surface_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:focusable="false"
+        app:use_controller="false" />
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/channellistRoot"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/channellistbg"
+            app:layout_constraintBottom_toTopOf="@id/channellistBottom2"
+            app:layout_constraintLeft_toLeftOf="@id/channellistLeft2"
+            app:layout_constraintRight_toRightOf="@id/channellistRight2"
+            app:layout_constraintTop_toTopOf="@id/tvgenretop" />
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/channellistTop"
+            app:layout_constraintLeft_toLeftOf="@id/channellistLeft"
+            app:layout_constraintRight_toRightOf="@id/channellistRight2"
+            app:layout_constraintTop_toTopOf="@id/tvgenretop">
+
+            <TextSwitcher
+                android:id="@+id/spinner2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+
+
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:textAlignment="center"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.Guideline
+            android:id="@+id/tvgenretop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.02" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/channellistLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.02" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/channellistLeft2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.02" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/channellistTop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.14" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/channellistRight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.23" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/channellistRight2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.23" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/channellistBottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.68" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/channellistBottom2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.98" />
+
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:spinnerMode="dropdown"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@id/channellistTop"
+            app:layout_constraintLeft_toLeftOf="@id/channellistLeft"
+            app:layout_constraintRight_toRightOf="@id/channellistRight"
+            app:layout_constraintTop_toTopOf="@id/tvgenretop" />
+
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+
+            app:layout_constraintBottom_toTopOf="@id/channellistBottom"
+            app:layout_constraintLeft_toRightOf="@id/channellistLeft"
+            app:layout_constraintRight_toLeftOf="@id/channellistRight"
+            app:layout_constraintTop_toBottomOf="@id/channellistTop">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+
+                android:orientation="vertical">
+
+
+                <LinearLayout
+                    android:id="@+id/iptvmenu"
+                    android:layout_width="match_parent"
+
+
+                    android:layout_height="match_parent"
+
+
+                    android:orientation="horizontal">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+
+                        <ListView
+                            android:id="@+id/channelsList"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:listSelector="@drawable/channelitembgselected" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/chevronup"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_keyboard_arrow_up_black_24dp"
+            app:layout_constraintBottom_toTopOf="@+id/channellistTop"
+            app:layout_constraintLeft_toRightOf="@id/channellistLeft"
+            app:layout_constraintRight_toLeftOf="@id/channellistRight" />
+
+        <ImageView
+            android:id="@+id/listviewmask"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:src="@drawable/gradientend"
+            app:layout_constraintBottom_toBottomOf="@+id/channellistBottom"
+            app:layout_constraintLeft_toRightOf="@id/channellistLeft"
+            app:layout_constraintRight_toLeftOf="@id/channellistRight" />
+
+        <ImageView
+            android:id="@+id/chevrondown"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:src="@drawable/ic_keyboard_arrow_down_black_24dp"
+            app:layout_constraintLeft_toRightOf="@id/channellistLeft"
+            app:layout_constraintRight_toLeftOf="@id/channellistRight"
+            app:layout_constraintTop_toBottomOf="@+id/listviewmask" />
+    </android.support.constraint.ConstraintLayout>
+
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/programmelistRoot"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible">
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/channellistbg"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="@id/guidelineepg"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/programmelistTop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.1" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guidelineepg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.77" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/programmetop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.03" />
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/programmelistTop"
+            app:layout_constraintLeft_toLeftOf="@id/guidelineepg"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@id/programmetop">
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="PROGRAMMES"
+                android:textAlignment="center"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.Guideline
+            android:id="@+id/epglistTop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.12" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+
+
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@id/programmelistviewmaskguide"
+            app:layout_constraintLeft_toRightOf="@id/guidelineepg"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@id/epglistTop">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <ListView
+                    android:id="@+id/programmesList"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:listSelector="@drawable/channelitembgselected" />
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/programmelistviewmask"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:src="@drawable/gradientend"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/guidelineepg"
+            app:layout_constraintRight_toRightOf="parent" />
+
+        <ImageView
+            android:id="@+id/programmelistchevrondown"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:src="@drawable/ic_keyboard_arrow_down_black_24dp"
+            app:layout_constraintLeft_toRightOf="@id/guidelineepg"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@id/programmelistviewmask" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/programmelistviewmaskguide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.88" />
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guidelineepg2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.65" />
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/archiveview"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/channellistbg"
+        android:orientation="vertical"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/guidelineepg2"
+        app:layout_constraintTop_toTopOf="@id/guidelineepgviewtop">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/selectedProgram"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text=""
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/selectedProgramDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text=""
+                android:textColor="@android:color/white"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.7" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guidelineepgviewtop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.77" />
+
+
+    <android.support.constraint.Guideline
+        android:id="@+id/epgRight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.35" />
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/epgview"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="@id/epgRight"
+        app:layout_constraintTop_toTopOf="@id/guideline2">
+
+        <LinearLayout
+            android:id="@+id/channelinfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/currentProgram"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:paddingBottom="10dp"
+            android:paddingTop="50dp"
+            android:text=""
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            android:textSize="23sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/epgLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.1" />
+
+        <TextView
+            android:id="@+id/nextProgram"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:text=""
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/currentProgram" />
+
+    </android.support.constraint.ConstraintLayout>
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent" android:visibility="invisible"
+        android:id="@+id/changepass" android:background="@android:color/transparent"
+        android:layout_height="match_parent">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+
+        android:background="@drawable/secretchangebg2"
+                app:layout_constraintLeft_toRightOf="@id/guideline4"
+
+        app:layout_constraintRight_toLeftOf="@id/guideline5"
+        app:layout_constraintTop_toBottomOf="@id/guideline6"
+        app:layout_constraintBottom_toTopOf="@id/guideline7"
+        >
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guidelinepasslast"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.31" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guidelinepasslast2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.463" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guidelinepasslast3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.617" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guidelinepasslast4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.77" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guidelinepasstop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.23" />
+
+        <TextView
+            android:id="@+id/changepasstext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:text="VEUILLEZ INSERER VOTRE CODE A 4 CHIFFRES"
+            android:textColor="@android:color/white"
+            android:textSize="15sp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@+id/pinbtngrid"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/guidelinepassbottom" />
+
+        <TextView
+            android:id="@+id/passinput1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:text="*"
+            android:textColor="@android:color/white"
+            android:textSize="25sp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@id/guidelinepassbottom"
+            app:layout_constraintEnd_toStartOf="@+id/guidelinepasslast"
+            app:layout_constraintStart_toStartOf="@+id/guidelinepassfirst"
+            app:layout_constraintTop_toBottomOf="@id/guidelinepasstop" />
+
+        <TextView
+            android:id="@+id/passinput2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:gravity="center"
+            android:text="*"
+            android:textColor="@android:color/white"
+            android:textSize="25sp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@id/guidelinepassbottom"
+            app:layout_constraintEnd_toStartOf="@+id/guidelinepasslast2"
+            app:layout_constraintStart_toStartOf="@+id/guidelinepassfirst2"
+            app:layout_constraintTop_toBottomOf="@id/guidelinepasstop" />
+
+        <TextView
+            android:id="@+id/passinput3"
+            android:layout_width="26dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:gravity="center"
+            android:text="*"
+            android:textColor="@android:color/white"
+            android:textSize="25sp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@id/guidelinepassbottom"
+            app:layout_constraintEnd_toStartOf="@+id/guidelinepasslast3"
+            app:layout_constraintStart_toStartOf="@+id/guidelinepassfirst3"
+            app:layout_constraintTop_toBottomOf="@id/guidelinepasstop" />
+
+        <TextView
+            android:id="@+id/passinput4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:gravity="center"
+            android:text="*"
+            android:textColor="@android:color/white"
+            android:textSize="25sp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@id/guidelinepassbottom"
+            app:layout_constraintEnd_toStartOf="@+id/guidelinepasslast4"
+            app:layout_constraintStart_toStartOf="@+id/guidelinepassfirst4"
+            app:layout_constraintTop_toBottomOf="@id/guidelinepasstop" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guidelinepassbottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.38" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guidelinepassfirst"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.227" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guidelinepassfirst2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.38" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guidelinepassfirst3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.535" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guidelinepassfirst4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.69" />
+
+        <GridLayout
+            android:id="@+id/pinbtngrid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:columnCount="3"
+            android:orientation="horizontal"
+            android:rowCount="3"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/guidelinepassbottom">
+
+            <Button
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_columnSpan="1"
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                android:layout_rowSpan="1"
+                android:background="@drawable/pincodeselector"
+                android:tag="1"
+                android:text="1"
+                android:textColor="@android:color/white"
+                android:textSize="25sp">
+
+                <requestFocus />
+            </Button>
+
+            <Button
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_columnSpan="1"
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                android:layout_rowSpan="1"
+                android:background="@drawable/pincodeselector"
+                android:tag="2"
+                android:text="2"
+                android:textColor="@android:color/white"
+                android:textSize="25sp" />
+
+            <Button
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_columnSpan="1"
+
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                android:layout_rowSpan="1"
+                android:background="@drawable/pincodeselector"
+                android:tag="3"
+                android:text="3"
+                android:textColor="@android:color/white"
+                android:textSize="25sp" />
+
+            <Button
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_columnSpan="1"
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                android:layout_rowSpan="1"
+                android:background="@drawable/pincodeselector"
+                android:tag="4"
+                android:text="4"
+                android:textColor="@android:color/white"
+                android:textSize="25sp" />
+
+            <Button
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_columnSpan="1"
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                android:layout_rowSpan="1"
+                android:background="@drawable/pincodeselector"
+                android:tag="5"
+                android:text="5"
+                android:textColor="@android:color/white"
+                android:textSize="25sp" />
+
+            <Button
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_columnSpan="1"
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                android:layout_rowSpan="1"
+                android:background="@drawable/pincodeselector"
+                android:tag="6"
+                android:text="6"
+                android:textColor="@android:color/white"
+                android:textSize="25sp" />
+
+            <Button
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_columnSpan="1"
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                android:layout_rowSpan="1"
+                android:background="@drawable/pincodeselector"
+                android:tag="7"
+                android:text="7"
+                android:textColor="@android:color/white"
+                android:textSize="25sp" />
+
+            <Button
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_columnSpan="1"
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                android:layout_rowSpan="1"
+                android:background="@drawable/pincodeselector"
+                android:tag="8"
+                android:text="8"
+                android:textColor="@android:color/white"
+                android:textSize="25sp" />
+
+            <Button
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_columnSpan="1"
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                android:layout_rowSpan="1"
+                android:background="@drawable/pincodeselector"
+                android:tag="9"
+                android:text="9"
+                android:textColor="@android:color/white"
+                android:textSize="25sp" />
+
+        </GridLayout>
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.2" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.8" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" app:layout_constraintGuide_percent="0.1"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.7" />
+    </android.support.constraint.ConstraintLayout>
+</android.support.constraint.ConstraintLayout>

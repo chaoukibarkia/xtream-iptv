@@ -1,0 +1,46 @@
+# ============================================
+# Redis Container - Quadlet Configuration
+# ============================================
+
+[Unit]
+Description=IPTV Redis Cache
+Documentation=https://redis.io/docs/
+After=network-online.target iptv-redis.volume.service
+Wants=network-online.target iptv-redis.volume.service
+PartOf=iptv-pod.service
+
+[Container]
+ContainerName=iptv-redis
+Image=docker.io/library/redis:7-alpine
+
+# Run in the iptv-pod
+Pod=iptv-pod.service
+
+# Volume mounts
+Volume=iptv-redis-data.volume:/data:Z
+
+# Redis configuration
+Exec=redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+
+# Health check
+HealthCmd=redis-cli ping
+HealthInterval=10s
+HealthTimeout=5s
+HealthRetries=5
+HealthStartPeriod=5s
+
+# Security
+SecurityLabelDisable=false
+User=redis
+
+# Resource limits (optional)
+# CPUQuota=50%
+# MemoryLimit=512M
+
+[Service]
+Restart=always
+TimeoutStartSec=60
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target iptv-pod.service

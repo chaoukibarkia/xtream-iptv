@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/menuconstraint"
+    android:background="@drawable/zebra_bg1"
+    tools:context="zb.zebra.IptvSelectorActivity">
+
+   <ImageView
+        android:id="@+id/selector"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:srcCompat="@drawable/selector"
+        app:layout_constraintBottom_toBottomOf="@id/selectorbottomguide"
+        app:layout_constraintLeft_toLeftOf="@+id/selectorleftguide"
+        app:layout_constraintRight_toLeftOf="@id/selectorright2guide"
+        app:layout_constraintTop_toTopOf="@id/selectortopguide"/>
+    <ImageView
+        android:id="@+id/selectorfilled"
+        android:alpha="0"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:srcCompat="@drawable/selectorfilled"
+        app:layout_constraintBottom_toBottomOf="@id/selectorfilledbottomguide"
+        app:layout_constraintLeft_toLeftOf="@+id/selectorfilledleftguide"
+        app:layout_constraintRight_toLeftOf="@id/selectorfilledright2guide"
+        app:layout_constraintTop_toTopOf="@id/selectorfilledtopguide"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/selectorfilledtopguide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.79" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/selectorfilledbottomguide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.97" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/selectorfilledright2guide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.56" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/selectorfilledleftguide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.44" />
+
+ <ImageButton
+     android:id="@+id/frChBtn"
+     android:layout_width="0dp"
+     android:layout_height="0dp"
+     android:background="@null"
+     android:scaleType="fitXY"
+
+
+     app:layout_constraintBottom_toBottomOf="@id/bottomguide"
+     app:layout_constraintHorizontal_bias="0.0"
+     app:layout_constraintLeft_toLeftOf="@+id/leftguide"
+     app:layout_constraintRight_toLeftOf="@id/right2guide"
+     app:layout_constraintTop_toTopOf="@id/topguide"
+     app:layout_constraintVertical_bias="0.0"
+     app:srcCompat="@drawable/french"
+     android:nextFocusRight="@id/arChBtn"
+     >
+ </ImageButton>
+
+ <ImageButton
+     android:id="@+id/arChBtn"
+     android:layout_width="0dp"
+     android:layout_height="0dp"
+
+     android:background="@null"
+     android:scaleType="fitXY"
+     app:layout_constraintBottom_toBottomOf="@id/bottomguide"
+     app:layout_constraintLeft_toRightOf="@+id/left2guide"
+     app:layout_constraintRight_toLeftOf="@+id/rightguide"
+     app:layout_constraintTop_toTopOf="@id/topguide"
+     app:srcCompat="@drawable/arabe"
+     android:nextFocusLeft="@id/frChBtn"
+     android:nextFocusRight="@id/allChBtn"
+     >
+
+ </ImageButton>
+
+
+
+
+ <ImageButton
+     android:id="@+id/allChBtn"
+     android:layout_width="0dp"
+     android:layout_height="0dp"
+     android:background="@null"
+     android:scaleType="fitXY"
+     app:layout_constraintBottom_toBottomOf="@id/bottomguide"
+     app:layout_constraintLeft_toRightOf="@+id/left2guide2"
+     app:layout_constraintRight_toLeftOf="@+id/right2guide2"
+     app:layout_constraintTop_toTopOf="@id/topguide"
+     app:srcCompat="@drawable/tous"
+     android:nextFocusRight="@id/arChBtn"
+     >
+  <requestFocus/>
+
+ </ImageButton>
+
+ <androidx.constraintlayout.widget.Guideline
+     android:id="@+id/leftguide"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+     android:orientation="vertical"
+     app:layout_constraintGuide_percent="0.1" />
+ <androidx.constraintlayout.widget.Guideline
+     android:id="@+id/selectorleftguide"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+     android:orientation="vertical"
+     app:layout_constraintGuide_percent="0.68" />
+ <androidx.constraintlayout.widget.Guideline
+     android:id="@+id/rightguide"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+     android:orientation="vertical"
+     app:layout_constraintGuide_percent="0.61" />
+
+ <androidx.constraintlayout.widget.Guideline
+     android:id="@+id/left2guide"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+     android:orientation="vertical"
+     app:layout_constraintGuide_percent="0.39" />
+
+ <androidx.constraintlayout.widget.Guideline
+     android:id="@+id/left2guide2"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+     android:orientation="vertical"
+     app:layout_constraintGuide_percent="0.68" />
+
+ <androidx.constraintlayout.widget.Guideline
+     android:id="@+id/right2guide"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+     android:orientation="vertical"
+     app:layout_constraintGuide_percent="0.31" />
+ <androidx.constraintlayout.widget.Guideline
+     android:id="@+id/selectorright2guide"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+     android:orientation="vertical"
+     app:layout_constraintGuide_percent="0.9" />
+ <androidx.constraintlayout.widget.Guideline
+     android:id="@+id/right2guide2"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+     android:orientation="vertical"
+     app:layout_constraintGuide_percent="0.9" />
+
+ <androidx.constraintlayout.widget.Guideline
+     android:id="@+id/topguide"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+     android:orientation="horizontal"
+     app:layout_constraintGuide_percent="0.3" />
+ <androidx.constraintlayout.widget.Guideline
+     android:id="@+id/selectortopguide"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+     android:orientation="horizontal"
+     app:layout_constraintGuide_percent="0.3" />
+ <androidx.constraintlayout.widget.Guideline
+     android:id="@+id/bottomguide"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+     android:orientation="horizontal"
+     app:layout_constraintGuide_percent="0.7" />
+ <androidx.constraintlayout.widget.Guideline
+     android:id="@+id/selectorbottomguide"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+     android:orientation="horizontal"
+     app:layout_constraintGuide_percent="0.7" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

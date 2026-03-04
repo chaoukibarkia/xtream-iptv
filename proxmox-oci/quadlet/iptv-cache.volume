@@ -1,0 +1,15 @@
+# ============================================
+# Image Cache Volume
+# ============================================
+
+[Unit]
+Description=IPTV Image Cache Volume
+
+[Volume]
+VolumeName=iptv-image-cache
+Device=/storage-pool/xtream-data/image-cache
+Type=none
+Options=bind
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,24 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Install ffmpeg
+RUN apk add --no-cache ffmpeg
+
+# Install dependencies
+COPY package*.json ./
+RUN npm install
+
+# Copy prisma schema
+COPY prisma ./prisma
+RUN npx prisma generate
+
+# Create directories
+RUN mkdir -p /tmp/hls-segments /var/log/iptv
+
+ENV NODE_ENV=development
+ENV PORT=3000
+
+EXPOSE 3000
+
+CMD ["npm", "run", "dev"]

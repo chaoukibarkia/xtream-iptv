@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutbg"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorGray" android:layoutDirection="ltr"
+    tools:context="zb.zebra.ZebraFilmDetailsActivity">
+
+
+    <android.support.constraint.Guideline
+        android:id="@+id/plotBottomGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.72" />
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/colorGrayTransparent"
+        app:layout_constraintBottom_toTopOf="@id/framelayout">
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/posterBottomGuideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.4" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/posterBottomGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.6" />
+
+    <FrameLayout
+        android:id="@+id/framelayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/colorBlack"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/posterBottomGuideline2">
+
+    </FrameLayout>
+    <android.support.constraint.Guideline
+        android:id="@+id/recyclerViewRight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" android:layoutDirection="ltr"
+        app:layout_constraintGuide_percent="0.99" />
+    <android.support.constraint.Guideline
+        android:id="@+id/recyclerViewLeft"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" android:layoutDirection="ltr"
+        app:layout_constraintGuide_percent="0.01" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/plotright"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" android:layoutDirection="ltr"
+        app:layout_constraintGuide_percent="0.98" />
+
+
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
+
+        android:layout_width="0dp"
+        android:layout_height="220dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="80dp"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="8dp"
+        android:descendantFocusability="afterDescendants"
+        android:focusable="true"
+        android:scrollbars="horizontal"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintBottom_toTopOf="@+id/framelayout"
+        app:layout_constraintEnd_toEndOf="@+id/recyclerViewRight"
+        app:layout_constraintStart_toStartOf="@+id/recyclerViewLeft"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:context="zb.zebra.zebra.TvshowZebraActivity"
+        tools:showIn="@layout/activity_tvshow_zebra" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="175dp"
+        android:layout_height="0dp"
+        android:layout_alignParentTop="true"
+        android:transitionName="poster_transition"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/posterRightGuideline"
+        app:layout_constraintTop_toTopOf="@+id/titletextview"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/posterRightGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.23" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/posterTopGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.2" />
+
+    <TextView
+        android:id="@+id/seriestextview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:text=""
+        android:textColor="@android:color/white"
+        android:textSize="40dp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/posterBottomGuideline"
+        app:layout_constraintStart_toStartOf="@+id/posterRightGuideline"
+        app:layout_constraintTop_toTopOf="@+id/posterBottomGuideline2" />
+    <TextView
+        android:id="@+id/titletextview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:text=""
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/posterBottomGuideline"
+        app:layout_constraintStart_toStartOf="@+id/posterRightGuideline"
+        app:layout_constraintTop_toBottomOf="@+id/seriestextview" />
+
+
+    <TextView
+        android:id="@+id/durationtextview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:textColor="@android:color/white"
+        app:layout_constraintStart_toStartOf="@+id/titletextview"
+        app:layout_constraintTop_toBottomOf="@+id/titletextview" />
+
+    <TextView
+        android:id="@+id/datetextview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:textColor="@android:color/white"
+        app:layout_constraintStart_toEndOf="@+id/durationtextview"
+        app:layout_constraintTop_toBottomOf="@+id/titletextview" />
+
+    <TextView
+        android:id="@+id/plotTextView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:scrollbars = "vertical"
+        android:text=""
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@+id/datetextview"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/plotright"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@id/titletextview"
+
+        app:layout_constraintVertical_bias="0.157" />
+
+
+
+
+</android.support.constraint.ConstraintLayout>

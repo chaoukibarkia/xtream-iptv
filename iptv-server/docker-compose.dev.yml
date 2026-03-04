@@ -1,0 +1,79 @@
+version: '3.8'
+
+# Development compose file - runs standalone with all services
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - DATABASE_URL=postgresql://iptv:iptv_secret@localhost:5435/iptv_db?connection_limit=20&pool_timeout=30&connect_timeout=30
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=dev-secret-key-for-development-only-32-chars
+      - SERVER_URL=http://localhost
+      - SERVER_PORT=3000
+      - LOG_LEVEL=debug
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - hls-segments:/tmp/hls-segments
+    command: npm run dev
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: iptv
+      POSTGRES_PASSWORD: iptv_secret
+      POSTGRES_DB: iptv_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5435:5432"
+    command:
+      - "postgres"
+      - "-c"
+      - "max_connections=100"
+      - "-c"
+      - "tcp_keepalives_idle=60"
+      - "-c"
+      - "tcp_keepalives_interval=10"
+      - "-c"
+      - "tcp_keepalives_count=6"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U iptv -d iptv_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  adminer:
+    image: adminer:latest
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
+  redis_data:
+  hls-segments:

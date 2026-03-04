@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="colorBlack">#000000</color>
+    <color name="colorGray">#484747</color>
+    <color name="colorGrayTransparent">#82000000</color>
+    <color name="selector">#9a90a4</color>
+    <color name="epgBarColor">#e3494848</color>
+    <color name="posterColor">#c2ffffff</color>
+    <color name="textColor">#f1d20c</color>
+    <color name="lb_view_dim_mask_color">#000000</color>
+    <color name="primary_transparent">#BF081c24</color>
+    <color name="primary_dark_transparent">#BF05151b</color>
+    <color name="accent_color">#01d277</color>
+    <color name="yellow">#ffeb3b</color>
+    <color name="epgbg">#55070707</color>
+    <color name="filmoverColor">#ffeb3b</color>
+    <color name="tvshowoverColor">#ffeb3b</color>
+    <color name="dark_transparent">#bf050505</color>
+    <color name="colorBlackTransparent">#a6000000</color>
+    <color name="colorBlackTransparent2">#61000000</color>
+
+</resources>
